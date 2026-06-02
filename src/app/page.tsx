@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import GymCanvas3D from "@/components/GymCanvas3D";
-import { Activity, Flame, ShieldAlert, Sparkles, TrendingUp, Zap } from "lucide-react";
 
 export default function Home() {
   return (
@@ -13,10 +12,19 @@ export default function Home() {
       <div className="noise-overlay pointer-events-none absolute inset-0 z-10" />
 
       {/* Hero Section */}
-      <section className="relative w-full min-h-[90vh] flex items-center justify-center overflow-hidden px-4 md:px-12 py-20">
+      <section className="relative w-full min-h-[95vh] flex items-center justify-center overflow-hidden px-4 md:px-12 py-20">
         <div className="scanline" />
-        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-electric-lime/5 rounded-full blur-[150px] -z-10 animate-float" />
-        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-apex-crimson/5 rounded-full blur-[150px] -z-10" />
+        
+        {/* Cinematic Background Image from Template */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            alt="Hero Background" 
+            className="w-full h-full object-cover opacity-35 scale-105" 
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5YEtLphCg7bRg8kf5JholoqvUY9gyIWJMjOAPcS4iwf4lldo62DEkUL6XLo1Pw0KRucPm_b0d6Gx-XIoJJ9RS6NdIcW4ohIIPWu1d9ET_ru53dXb3C8KhssgPhblv-bcurjNuqlj5lWSePl9pO8DbOF2OBQGD0e-Wf7auyolvE1sCbbu9hQOsFCp8_ayav2xsEwmEzm_ZoAtloGd5YgjvGM3cr3EvF5BK-Ki_gyqkliO14_YDR9lYvV53ndn9H6_4zKP9zx6Yiuc"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-deep-obsidian via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-deep-obsidian/85 via-transparent to-transparent" />
+        </div>
 
         <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center z-20">
           {/* Hero Text */}
@@ -50,14 +58,13 @@ export default function Home() {
             </div>
           </motion.div>
 
-          {/* Floating Telemetry Box or Decorator */}
+          {/* Dumbbell Canvas Frame */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, ease: "easeOut" }}
             className="relative flex items-center justify-center glass-card p-6 h-[400px] md:h-[500px] overflow-hidden"
           >
-            {/* Mesh background light */}
             <div className="absolute inset-0 bg-gradient-to-tr from-electric-lime/5 via-transparent to-apex-crimson/5 opacity-40 pointer-events-none" />
             <GymCanvas3D />
           </motion.div>
@@ -67,7 +74,7 @@ export default function Home() {
       {/* Equipment Showcase Section */}
       <section className="w-full py-24 bg-surface/30 px-4 md:px-12 border-t border-b border-glass-stroke">
         <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          {/* 3D WebGL Dumbbell Model left */}
+          
           <motion.div 
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -79,7 +86,6 @@ export default function Home() {
             <GymCanvas3D />
           </motion.div>
 
-          {/* Equipment Copy right */}
           <motion.div 
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -123,11 +129,14 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="md:col-span-8 group relative h-[450px] overflow-hidden rounded-xl border border-glass-stroke glass-card flex flex-col justify-end p-8 md:p-10"
+              className="md:col-span-8 group relative h-[500px] overflow-hidden rounded-xl border border-glass-stroke glass-card flex flex-col justify-end p-8 md:p-10"
             >
+              <img 
+                className="absolute inset-0 w-full h-full object-cover opacity-35 group-hover:scale-110 transition-transform duration-1000 z-0" 
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBj0_ArIDFYBYFcH2Lb0OhA56nW4Bh4Y_7gnHPQlRVF3tT5TId693FnEgeNKw3tIXohmQnW0VtdFK446wD9h8tF6JDZWnbdoA6GZacVVdTqNe_N8vjaArNHeFEFXdM4EfiS-uDQx28iL14ITHPF4Nw4jKcgRuWGNdx-XybewuztlWKAhCpVUF6DWudRbRLdaBqtjnS9Ig-y13psh8VghUobnhypJnyTGVwY0FUs9Wc-92z5TrVpZJay4SDoiYuwDaTyT2eT_Oh1uDc"
+                alt="Kinetic Revolution"
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-deep-obsidian via-deep-obsidian/40 to-transparent z-10" />
-              {/* Fallback image glow */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-electric-lime/5 via-transparent to-transparent z-0 group-hover:scale-105 transition-transform duration-1000" />
               <div className="relative z-20 space-y-4">
                 <span className="font-mono text-[10px] bg-electric-lime/10 text-electric-lime px-3 py-1 rounded-full uppercase tracking-wider font-bold">01 / PERFORMANCE</span>
                 <h3 className="text-2xl md:text-4xl font-bold font-sora text-white">KINETIC REVOLUTION</h3>
@@ -143,10 +152,14 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.15 }}
-              className="md:col-span-4 group relative h-[450px] overflow-hidden rounded-xl border border-glass-stroke glass-card flex flex-col justify-end p-8 md:p-10"
+              className="md:col-span-4 group relative h-[500px] overflow-hidden rounded-xl border border-glass-stroke glass-card flex flex-col justify-end p-8 md:p-10"
             >
+              <img 
+                className="absolute inset-0 w-full h-full object-cover opacity-35 group-hover:scale-110 transition-transform duration-1000 z-0" 
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvXrjtNn8k54v-lMF94AQwU7IWWg4r6VtbAEF60PtJTfkMbmyPEJR9tO680L8sEqE1T1_7-BUkEp6T8P-203rjHOJM3-4n9Rltc304zLZPqeo369x-i1LDehIb3SjzcESCNFVErOUW91ZjwgR5RhMhaBeqPKmzSkRCgMbnJboKzfW36BsCnGhAoT_AfmDxpjnxM4vG8kRcWbL8vcys2l9yCgFCnK5T1_5KF6qpLQRYchjVBpuPMeI126yNax-aDaQc62RBlTh55TU"
+                alt="Biometric Mastery"
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-deep-obsidian via-deep-obsidian/40 to-transparent z-10" />
-              <div className="absolute inset-0 bg-gradient-to-tr from-apex-crimson/5 via-transparent to-transparent z-0 group-hover:scale-105 transition-transform duration-1000" />
               <div className="relative z-20 space-y-4">
                 <span className="font-mono text-[10px] bg-electric-lime/10 text-electric-lime px-3 py-1 rounded-full uppercase tracking-wider font-bold">02 / COACHING</span>
                 <h3 className="text-2xl font-bold font-sora text-white">BIOMETRIC MASTERY</h3>
@@ -162,10 +175,14 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="md:col-span-12 group relative h-[350px] overflow-hidden rounded-xl border border-glass-stroke glass-card flex items-center p-8 md:p-12"
+              className="md:col-span-12 group relative h-[400px] overflow-hidden rounded-xl border border-glass-stroke glass-card flex items-center p-8 md:p-12"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-deep-obsidian via-deep-obsidian/20 to-transparent z-10" />
-              <div className="absolute inset-0 bg-gradient-to-tr from-electric-lime/5 via-transparent to-transparent z-0 group-hover:scale-105 transition-transform duration-1000" />
+              <img 
+                className="absolute inset-0 w-full h-full object-cover opacity-25 group-hover:scale-105 transition-transform duration-1000 z-0" 
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIAJ1haPxAK0dM-B4mgX4lNEfriFcvM-UNIuNiqfLGKvYlUXs_IBZSwn9cFh2r2AUwukuxRwcgACQrLV4OA1rXU8wy7rIp3GqGhLxiZhOu0EeGb8P1Atg2xtnKQ3POB7ij7JKojBa9noaXqVq5I4ubSUp6oEiNjecSbpawpxtbsEi_qQOkoJ1t1_cdYKhucc0Q1X-wFvQimhBV3z02iHKJUOHsjr0Dn9SO6wChM7_QrvTgXA2hyzO7MqOi6MC1g05HpVNfEmg9FZ0"
+                alt="Neural Reset"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-deep-obsidian via-transparent to-transparent z-10" />
               <div className="relative z-20 max-w-xl space-y-4">
                 <span className="font-mono text-[10px] bg-electric-lime/10 text-electric-lime px-3 py-1 rounded-full uppercase tracking-wider font-bold">03 / RECOVERY</span>
                 <h3 className="text-2xl md:text-4xl font-bold font-sora text-white">NEURAL RESET</h3>
@@ -179,8 +196,19 @@ export default function Home() {
       </section>
 
       {/* Telemetry progress & Pricing layout */}
-      <section className="relative w-full py-24 bg-surface px-4 md:px-12 border-t border-glass-stroke">
-        <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <section className="relative w-full py-24 bg-surface px-4 md:px-12 border-t border-glass-stroke overflow-hidden">
+        
+        {/* Background telemetry data stream from template */}
+        <div className="absolute inset-0 z-0 opacity-25">
+          <img 
+            className="w-full h-full object-cover" 
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAims_Kusqdsg9IcJLoksmx1cOV_1RSHoQp1tm5xTd-rtqgq8CsA6S0Bo0pAdwCmbNKKf5aV-KTZUyLBleEDyChgDOU57t-Dm67h9MPKfKEnC-xGRZd90mhmNLwVr60EeCiwQUahdvKI0FQ4WbkEGrT6fOikBCZUjk0onlHB4fzsYhthhVqodi1d22eRc7PkWCPM3SxzNJemQxqxvEYQ_Lk8YFO7aMmv7fulmto3KSXGVSHJIA6_h_C_RHzausViJ1Wz12Iw90wKUw"
+            alt="Telemetry Data Background"
+          />
+          <div className="absolute inset-0 bg-deep-obsidian/85 backdrop-blur-sm" />
+        </div>
+
+        <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center z-10 relative">
           
           {/* Left stats counter */}
           <motion.div 
