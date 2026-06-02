@@ -17,7 +17,7 @@ export default function GymCanvas3D() {
     const scene = new THREE.Scene();
 
     // Camera
-    const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
     camera.position.z = 3.5;
 
     // Renderer
@@ -26,73 +26,229 @@ export default function GymCanvas3D() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     containerRef.current.appendChild(renderer.domElement);
 
+    // Lights
+    // Ambient light provides soft overall illumination
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
+    scene.add(ambientLight);
+
+    // Direct lighting for specular highlights on metal and rubber surfaces
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, 1.4);
+    dirLight1.position.set(5, 5, 4);
+    scene.add(dirLight1);
+
+    const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
+    dirLight2.position.set(-5, -3, -2);
+    scene.add(dirLight2);
+
+    // Front-facing light aligned with the camera to prevent dark angles during rotation
+    const cameraLight = new THREE.DirectionalLight(0xffffff, 0.85);
+    cameraLight.position.set(0, 0, 4);
+    scene.add(cameraLight);
+
+    // Colored accent point lights to cast neon reflections
+    const limeLight = new THREE.PointLight(0xDFFF11, 3.5, 10);
+    limeLight.position.set(0, 3, 2);
+    scene.add(limeLight);
+
+    const crimsonLight = new THREE.PointLight(0xFF003C, 3.5, 10);
+    crimsonLight.position.set(0, -3, -2);
+    scene.add(crimsonLight);
+
+    // Procedural Knurling Texture for Handle
+    const createKnurlingTexture = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = 128;
+      canvas.height = 128;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return null;
+
+      // Base metal color
+      ctx.fillStyle = "#666666";
+      ctx.fillRect(0, 0, 128, 128);
+
+      // Knurling hatch lines
+      ctx.strokeStyle = "#444444";
+      ctx.lineWidth = 1;
+      const step = 8;
+      for (let i = -128; i < 128 * 2; i += step) {
+        ctx.beginPath();
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i + 128, 128);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(i + 128, 0);
+        ctx.lineTo(i, 128);
+        ctx.stroke();
+      }
+
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      texture.repeat.set(10, 3);
+      return texture;
+    };
+
+    const createKnurlingBumpMap = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = 128;
+      canvas.height = 128;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return null;
+
+      // Midpoint grey for no displacement
+      ctx.fillStyle = "#808080";
+      ctx.fillRect(0, 0, 128, 128);
+
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 2;
+      const step = 8;
+      for (let i = -128; i < 128 * 2; i += step) {
+        ctx.beginPath();
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i + 128, 128);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(i + 128, 0);
+        ctx.lineTo(i, 128);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = "#000000";
+      ctx.lineWidth = 1;
+      for (let i = -128 + 2; i < 128 * 2 + 2; i += step) {
+        ctx.beginPath();
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i + 128, 128);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(i + 128, 0);
+        ctx.lineTo(i, 128);
+        ctx.stroke();
+      }
+
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      texture.repeat.set(10, 3);
+      return texture;
+    };
+
+    const knurlingMap = createKnurlingTexture();
+    const bumpMap = createKnurlingBumpMap();
+
     // Dumbbell Group
     const dumbbell = new THREE.Group();
 
-    // Materials
-    const limeNeonMaterial = new THREE.MeshBasicMaterial({
-      color: 0xDFFF11, // Electric Lime
-      wireframe: true,
-      transparent: true,
-      opacity: 0.85,
+    // Phong Materials for Specular Lighting
+    const steelMaterial = new THREE.MeshPhongMaterial({
+      color: 0x888888,
+      specular: 0x999999,
+      shininess: 70,
+      map: knurlingMap,
+      bumpMap: bumpMap,
+      bumpScale: 0.025,
     });
 
-    const crimsonNeonMaterial = new THREE.MeshBasicMaterial({
-      color: 0xFF003C, // Apex Crimson
-      wireframe: true,
+    const chromeMaterial = new THREE.MeshPhongMaterial({
+      color: 0xcccccc,
+      specular: 0xffffff,
+      shininess: 120,
+    });
+
+    const darkRubberMaterial = new THREE.MeshPhongMaterial({
+      color: 0x222222,
+      specular: 0x555555,
+      shininess: 25,
+    });
+
+    const limeGlowMaterial = new THREE.MeshBasicMaterial({
+      color: 0xDFFF11,
       transparent: true,
-      opacity: 0.7,
+      opacity: 0.95,
+    });
+
+    const crimsonGlowMaterial = new THREE.MeshBasicMaterial({
+      color: 0xFF003C,
+      transparent: true,
+      opacity: 0.95,
     });
 
     // 1. Handle (Middle Bar)
-    const handleGeom = new THREE.CylinderGeometry(0.08, 0.08, 2.2, 16);
-    const handleMesh = new THREE.Mesh(handleGeom, limeNeonMaterial);
-    handleMesh.rotation.z = Math.PI / 2; // Lie horizontally along X-axis
+    const handleGeom = new THREE.CylinderGeometry(0.085, 0.085, 2.0, 32);
+    const handleMesh = new THREE.Mesh(handleGeom, steelMaterial);
+    handleMesh.rotation.z = Math.PI / 2;
     dumbbell.add(handleMesh);
 
-    // 2. Weights (Left and Right plates)
-    const innerPlateGeom = new THREE.CylinderGeometry(0.5, 0.5, 0.25, 24);
-    const outerPlateGeom = new THREE.CylinderGeometry(0.65, 0.65, 0.25, 24);
+    // 2. Collars (Stoppers at handle ends)
+    const collarGeom = new THREE.CylinderGeometry(0.14, 0.14, 0.08, 32);
 
-    // Left Plates
-    const leftPlate1 = new THREE.Mesh(innerPlateGeom, crimsonNeonMaterial);
-    leftPlate1.rotation.z = Math.PI / 2;
-    leftPlate1.position.x = -0.65;
-    dumbbell.add(leftPlate1);
-
-    const leftPlate2 = new THREE.Mesh(outerPlateGeom, limeNeonMaterial);
-    leftPlate2.rotation.z = Math.PI / 2;
-    leftPlate2.position.x = -0.95;
-    dumbbell.add(leftPlate2);
-
-    // Right Plates
-    const rightPlate1 = new THREE.Mesh(innerPlateGeom, crimsonNeonMaterial);
-    rightPlate1.rotation.z = Math.PI / 2;
-    rightPlate1.position.x = 0.65;
-    dumbbell.add(rightPlate1);
-
-    const rightPlate2 = new THREE.Mesh(outerPlateGeom, limeNeonMaterial);
-    rightPlate2.rotation.z = Math.PI / 2;
-    rightPlate2.position.x = 0.95;
-    dumbbell.add(rightPlate2);
-
-    // 3. Collars (Stoppers)
-    const collarGeom = new THREE.CylinderGeometry(0.12, 0.12, 0.1, 16);
-    
-    const leftCollar = new THREE.Mesh(collarGeom, limeNeonMaterial);
+    const leftCollar = new THREE.Mesh(collarGeom, chromeMaterial);
     leftCollar.rotation.z = Math.PI / 2;
     leftCollar.position.x = -0.45;
     dumbbell.add(leftCollar);
 
-    const rightCollar = new THREE.Mesh(collarGeom, limeNeonMaterial);
+    const rightCollar = new THREE.Mesh(collarGeom, chromeMaterial);
     rightCollar.rotation.z = Math.PI / 2;
     rightCollar.position.x = 0.45;
     dumbbell.add(rightCollar);
 
+    // 3. Weight Plates
+    const innerPlateGeom = new THREE.CylinderGeometry(0.48, 0.48, 0.22, 32);
+    const outerPlateGeom = new THREE.CylinderGeometry(0.62, 0.62, 0.24, 32);
+
+    // Left Plates (Solid rubber)
+    const leftPlate1 = new THREE.Mesh(innerPlateGeom, darkRubberMaterial);
+    leftPlate1.rotation.z = Math.PI / 2;
+    leftPlate1.position.x = -0.68;
+    dumbbell.add(leftPlate1);
+
+    const leftPlate2 = new THREE.Mesh(outerPlateGeom, darkRubberMaterial);
+    leftPlate2.rotation.z = Math.PI / 2;
+    leftPlate2.position.x = -0.96;
+    dumbbell.add(leftPlate2);
+
+    // Left Neon Trim Rings
+    const leftTrim1Geom = new THREE.TorusGeometry(0.49, 0.02, 16, 64);
+    const leftTrim1 = new THREE.Mesh(leftTrim1Geom, crimsonGlowMaterial);
+    leftTrim1.rotation.y = Math.PI / 2;
+    leftTrim1.position.x = -0.56;
+    dumbbell.add(leftTrim1);
+
+    const leftTrim2Geom = new THREE.TorusGeometry(0.63, 0.02, 16, 64);
+    const leftTrim2 = new THREE.Mesh(leftTrim2Geom, limeGlowMaterial);
+    leftTrim2.rotation.y = Math.PI / 2;
+    leftTrim2.position.x = -0.83;
+    dumbbell.add(leftTrim2);
+
+    // Right Plates (Solid rubber)
+    const rightPlate1 = new THREE.Mesh(innerPlateGeom, darkRubberMaterial);
+    rightPlate1.rotation.z = Math.PI / 2;
+    rightPlate1.position.x = 0.68;
+    dumbbell.add(rightPlate1);
+
+    const rightPlate2 = new THREE.Mesh(outerPlateGeom, darkRubberMaterial);
+    rightPlate2.rotation.z = Math.PI / 2;
+    rightPlate2.position.x = 0.96;
+    dumbbell.add(rightPlate2);
+
+    // Right Neon Trim Rings
+    const rightTrim1 = new THREE.Mesh(leftTrim1Geom, crimsonGlowMaterial);
+    rightTrim1.rotation.y = Math.PI / 2;
+    rightTrim1.position.x = 0.56;
+    dumbbell.add(rightTrim1);
+
+    const rightTrim2 = new THREE.Mesh(leftTrim2Geom, limeGlowMaterial);
+    rightTrim2.rotation.y = Math.PI / 2;
+    rightTrim2.position.x = 0.83;
+    dumbbell.add(rightTrim2);
+
     scene.add(dumbbell);
 
     // Particle field around the dumbbell (Lime)
-    const particlesCount = 150;
+    const particlesCount = 100;
     const positionArray = new Float32Array(particlesCount * 3);
     for (let i = 0; i < particlesCount * 3; i++) {
       positionArray[i] = (Math.random() - 0.5) * 6;
@@ -103,7 +259,7 @@ export default function GymCanvas3D() {
       size: 0.02,
       color: 0xDFFF11,
       transparent: true,
-      opacity: 0.8,
+      opacity: 0.6,
     });
     const particles = new THREE.Points(particleGeometry, particleMaterial);
     scene.add(particles);
@@ -147,14 +303,14 @@ export default function GymCanvas3D() {
       targetY = mouseY * 0.8;
 
       // Dumbbell spin + hover effect + tilt with mouse
-      dumbbell.rotation.y = elapsedTime * 0.4 + (targetX - dumbbell.rotation.y) * 0.1;
-      dumbbell.rotation.x = Math.sin(elapsedTime * 0.5) * 0.2 + (targetY - dumbbell.rotation.x) * 0.1;
-      dumbbell.rotation.z = Math.cos(elapsedTime * 0.3) * 0.1;
+      dumbbell.rotation.y = elapsedTime * 0.35 + (targetX - dumbbell.rotation.y) * 0.1;
+      dumbbell.rotation.x = Math.sin(elapsedTime * 0.4) * 0.15 + (targetY - dumbbell.rotation.x) * 0.1;
+      dumbbell.rotation.z = Math.cos(elapsedTime * 0.2) * 0.08;
 
       // Hover floating effect
-      dumbbell.position.y = Math.sin(elapsedTime * 1.5) * 0.1;
+      dumbbell.position.y = Math.sin(elapsedTime * 1.2) * 0.08;
 
-      particles.rotation.y = elapsedTime * 0.05;
+      particles.rotation.y = elapsedTime * 0.03;
 
       renderer.render(scene, camera);
       requestAnimationFrame(animate);
@@ -171,11 +327,18 @@ export default function GymCanvas3D() {
         containerRef.current.removeChild(renderer.domElement);
       }
       handleGeom.dispose();
+      collarGeom.dispose();
       innerPlateGeom.dispose();
       outerPlateGeom.dispose();
-      collarGeom.dispose();
-      limeNeonMaterial.dispose();
-      crimsonNeonMaterial.dispose();
+      leftTrim1Geom.dispose();
+      leftTrim2Geom.dispose();
+      steelMaterial.dispose();
+      chromeMaterial.dispose();
+      darkRubberMaterial.dispose();
+      limeGlowMaterial.dispose();
+      crimsonGlowMaterial.dispose();
+      if (knurlingMap) knurlingMap.dispose();
+      if (bumpMap) bumpMap.dispose();
       particleGeometry.dispose();
       particleMaterial.dispose();
       renderer.dispose();
