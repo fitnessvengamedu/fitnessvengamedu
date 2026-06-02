@@ -247,19 +247,44 @@ export default function GymCanvas3D() {
 
     scene.add(dumbbell);
 
-    // Particle field around the dumbbell (Lime)
-    const particlesCount = 100;
+    // Particle field around the dumbbell (Lime + Orange/Red Sparks)
+    const particlesCount = 150;
     const positionArray = new Float32Array(particlesCount * 3);
-    for (let i = 0; i < particlesCount * 3; i++) {
-      positionArray[i] = (Math.random() - 0.5) * 6;
+    const colorArray = new Float32Array(particlesCount * 3);
+    
+    const limeColor = new THREE.Color(0xDFFF11);
+    const orangeColor = new THREE.Color(0xFF8800);
+    const redColor = new THREE.Color(0xFF2200);
+
+    for (let i = 0; i < particlesCount; i++) {
+      positionArray[i * 3] = (Math.random() - 0.5) * 6;
+      positionArray[i * 3 + 1] = (Math.random() - 0.5) * 6;
+      positionArray[i * 3 + 2] = (Math.random() - 0.5) * 6;
+
+      let particleColor;
+      const rand = Math.random();
+      if (rand < 0.5) {
+        particleColor = limeColor;
+      } else if (rand < 0.85) {
+        particleColor = orangeColor;
+      } else {
+        particleColor = redColor;
+      }
+
+      colorArray[i * 3] = particleColor.r;
+      colorArray[i * 3 + 1] = particleColor.g;
+      colorArray[i * 3 + 2] = particleColor.b;
     }
+
     const particleGeometry = new THREE.BufferGeometry();
     particleGeometry.setAttribute("position", new THREE.BufferAttribute(positionArray, 3));
+    particleGeometry.setAttribute("color", new THREE.BufferAttribute(colorArray, 3));
+    
     const particleMaterial = new THREE.PointsMaterial({
-      size: 0.02,
-      color: 0xDFFF11,
+      size: 0.025,
+      vertexColors: true,
       transparent: true,
-      opacity: 0.6,
+      opacity: 0.75,
     });
     const particles = new THREE.Points(particleGeometry, particleMaterial);
     scene.add(particles);

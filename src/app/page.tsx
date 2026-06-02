@@ -133,7 +133,7 @@ export default function Home() {
             >
               <img 
                 className="absolute inset-0 w-full h-full object-cover opacity-35 group-hover:scale-110 transition-transform duration-1000 z-0" 
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBj0_ArIDFYBYFcH2Lb0OhA56nW4Bh4Y_7gnHPQlRVF3tT5TId693FnEgeNKw3tIXohmQnW0VtdFK446wD9h8tF6JDZWnbdoA6GZacVVdTqNe_N8vjaArNHeFEFXdM4EfiS-uDQx28iL14ITHPF4Nw4jKcgRuWGNdx-XybewuztlWKAhCpVUF6DWudRbRLdaBqtjnS9Ig-y13psh8VghUobnhypJnyTGVwY0FUs9Wc-92z5TrVpZJay4SDoiYuwDaTyT2eT_Oh1uDc"
+                src="/images/gym_1.jpg"
                 alt="Kinetic Revolution"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-deep-obsidian via-deep-obsidian/40 to-transparent z-10" />
@@ -156,7 +156,7 @@ export default function Home() {
             >
               <img 
                 className="absolute inset-0 w-full h-full object-cover opacity-35 group-hover:scale-110 transition-transform duration-1000 z-0" 
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvXrjtNn8k54v-lMF94AQwU7IWWg4r6VtbAEF60PtJTfkMbmyPEJR9tO680L8sEqE1T1_7-BUkEp6T8P-203rjHOJM3-4n9Rltc304zLZPqeo369x-i1LDehIb3SjzcESCNFVErOUW91ZjwgR5RhMhaBeqPKmzSkRCgMbnJboKzfW36BsCnGhAoT_AfmDxpjnxM4vG8kRcWbL8vcys2l9yCgFCnK5T1_5KF6qpLQRYchjVBpuPMeI126yNax-aDaQc62RBlTh55TU"
+                src="/images/gym_2.jpg"
                 alt="Biometric Mastery"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-deep-obsidian via-deep-obsidian/40 to-transparent z-10" />
