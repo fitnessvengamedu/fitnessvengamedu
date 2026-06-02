@@ -1,0 +1,17 @@
+{
+  "C:\\Users\\sk143\\Downloads\\fitness app\\.claude\\settings.json": {
+    "mtime": 1780040292.0388594,
+    "ast_hash": "c92c0833bf104f8443120494b397c1a2",
+    "semantic_hash": "c92c0833bf104f8443120494b397c1a2"
+  },
+  "C:\\Users\\sk143\\Downloads\\fitness app\\.claude\\hooks\\lint-on-save.sh": {
+    "mtime": 1780040491.3706405,
+    "ast_hash": "0eb0b5e2ee300105362f8473ac6008a4",
+    "semantic_hash": "0eb0b5e2ee300105362f8473ac6008a4"
+  },
+  "C:\\Users\\sk143\\Downloads\\fitness app\\.claude\\hooks\\pre-commit.sh": {
+    "mtime": 1780040498.8533328,
+    "ast_hash": "49375685fe45bb41393bfab2bcfba2bc",
+    "semantic_hash": "49375685fe45bb41393bfab2bcfba2bc"
+  }
+}

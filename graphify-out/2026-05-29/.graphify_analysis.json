@@ -1,0 +1,186 @@
+{
+  "communities": {
+    "0": [
+      "claude_settings_automemoryenabled",
+      "claude_settings_hooks",
+      "claude_settings_hooks_posttooluse",
+      "claude_settings_hooks_pretooluse",
+      "claude_settings_json",
+      "claude_settings_model"
+    ],
+    "1": [
+      "api_rules",
+      "code_reviewer_agent",
+      "database_rules",
+      "frontend_design_skill",
+      "frontend_rules"
+    ],
+    "2": [
+      "claude_fitness_app",
+      "claude_nextjs",
+      "claude_supabase",
+      "claude_zustand",
+      "doc_writer_agent"
+    ],
+    "3": [
+      "claude_settings_permissions",
+      "claude_settings_permissions_allow",
+      "claude_settings_permissions_deny"
+    ],
+    "4": [
+      "claude_command",
+      "global_rules",
+      "report_command"
+    ],
+    "5": [
+      "c_users_sk143_downloads_fitness_app_claude_hooks_lint_on_save_sh__entry",
+      "claude_hooks_lint_on_save_sh"
+    ],
+    "6": [
+      "c_users_sk143_downloads_fitness_app_claude_hooks_pre_commit_sh__entry",
+      "claude_hooks_pre_commit_sh"
+    ],
+    "7": [
+      "debugger_agent"
+    ],
+    "8": [
+      "refactorer_agent"
+    ],
+    "9": [
+      "security_auditor_agent"
+    ],
+    "10": [
+      "test_writer_agent"
+    ],
+    "11": [
+      "deploy_command"
+    ]
+  },
+  "cohesion": {
+    "0": 0.3333333333333333,
+    "1": 0.4,
+    "2": 0.4,
+    "3": 0.6666666666666666,
+    "4": 0.6666666666666666,
+    "5": 1.0,
+    "6": 1.0,
+    "7": 1.0,
+    "8": 1.0,
+    "9": 1.0,
+    "10": 1.0,
+    "11": 1.0
+  },
+  "gods": [
+    {
+      "id": "claude_fitness_app",
+      "label": "Stitch Apex Elite",
+      "degree": 5
+    },
+    {
+      "id": "claude_settings_permissions",
+      "label": "permissions",
+      "degree": 3
+    },
+    {
+      "id": "claude_settings_hooks",
+      "label": "hooks",
+      "degree": 3
+    },
+    {
+      "id": "code_reviewer_agent",
+      "label": "Code Reviewer",
+      "degree": 3
+    },
+    {
+      "id": "claude_command",
+      "label": "/claude",
+      "degree": 2
+    },
+    {
+      "id": "frontend_rules",
+      "label": "Frontend Architecture Rules",
+      "degree": 2
+    },
+    {
+      "id": "global_rules",
+      "label": "Global Rules",
+      "degree": 2
+    },
+    {
+      "id": "claude_settings_permissions_allow",
+      "label": "allow",
+      "degree": 1
+    },
+    {
+      "id": "claude_settings_permissions_deny",
+      "label": "deny",
+      "degree": 1
+    },
+    {
+      "id": "claude_settings_hooks_pretooluse",
+      "label": "PreToolUse",
+      "degree": 1
+    }
+  ],
+  "surprises": [
+    {
+      "source": "/claude",
+      "target": "Stitch Apex Elite",
+      "source_files": [
+        ".claude/commands/claude.md",
+        "CLAUDE.MD"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories; bridges separate communities; peripheral node `/claude` unexpectedly reaches hub `Stitch Apex Elite`"
+    },
+    {
+      "source": "Doc Writer",
+      "target": "Stitch Apex Elite",
+      "source_files": [
+        ".claude/agents/doc-writer.md",
+        "CLAUDE.MD"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories; peripheral node `Doc Writer` unexpectedly reaches hub `Stitch Apex Elite`"
+    },
+    {
+      "source": "/report",
+      "target": "Global Rules",
+      "source_files": [
+        ".claude/commands/report.md",
+        ".claude/rules/global.md"
+      ],
+      "confidence": "INFERRED",
+      "relation": "implements",
+      "why": "inferred connection - not explicitly stated in source"
+    },
+    {
+      "source": "Frontend Architecture Rules",
+      "target": "Frontend Design Skill",
+      "source_files": [
+        ".claude/rules/frontend.md",
+        ".claude/skills/frontend-design/SKILL.md"
+      ],
+      "confidence": "INFERRED",
+      "relation": "conceptually_related_to",
+      "why": "inferred connection - not explicitly stated in source"
+    },
+    {
+      "source": "Code Reviewer",
+      "target": "API Development Rules",
+      "source_files": [
+        ".claude/agents/code-reviewer.md",
+        ".claude/rules/api.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "cross-file semantic connection"
+    }
+  ],
+  "tokens": {
+    "input": 7741,
+    "output": 1814
+  }
+}
