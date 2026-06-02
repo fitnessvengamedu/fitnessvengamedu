@@ -18,7 +18,7 @@ export default function GymCanvas3D() {
 
     // Camera
     const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-    camera.position.z = 4;
+    camera.position.z = 3.5;
 
     // Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -26,37 +26,76 @@ export default function GymCanvas3D() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     containerRef.current.appendChild(renderer.domElement);
 
-    // Geometry - Futuristic Torus Knot (Wireframe)
-    const geometry = new THREE.TorusKnotGeometry(1.2, 0.35, 120, 16);
-    
-    // Custom Glow Shader/Basic Line material
-    const material = new THREE.MeshBasicMaterial({
+    // Dumbbell Group
+    const dumbbell = new THREE.Group();
+
+    // Materials
+    const blueNeonMaterial = new THREE.MeshBasicMaterial({
       color: 0x00f0ff,
       wireframe: true,
       transparent: true,
-      opacity: 0.8,
+      opacity: 0.85,
     });
 
-    // Mesh
-    const torusKnot = new THREE.Mesh(geometry, material);
-    scene.add(torusKnot);
-
-    // Inner core sphere (neon pink wireframe)
-    const coreGeometry = new THREE.IcosahedronGeometry(0.7, 2);
-    const coreMaterial = new THREE.MeshBasicMaterial({
+    const pinkNeonMaterial = new THREE.MeshBasicMaterial({
       color: 0xff007f,
       wireframe: true,
       transparent: true,
-      opacity: 0.6,
+      opacity: 0.7,
     });
-    const core = new THREE.Mesh(coreGeometry, coreMaterial);
-    scene.add(core);
 
-    // Particle field
-    const particlesCount = 200;
+    // 1. Handle (Middle Bar)
+    const handleGeom = new THREE.CylinderGeometry(0.08, 0.08, 2.2, 16);
+    const handleMesh = new THREE.Mesh(handleGeom, blueNeonMaterial);
+    handleMesh.rotation.z = Math.PI / 2; // Lie horizontally along X-axis
+    dumbbell.add(handleMesh);
+
+    // 2. Weights (Left and Right plates)
+    const innerPlateGeom = new THREE.CylinderGeometry(0.5, 0.5, 0.25, 24);
+    const outerPlateGeom = new THREE.CylinderGeometry(0.65, 0.65, 0.25, 24);
+
+    // Left Plates
+    const leftPlate1 = new THREE.Mesh(innerPlateGeom, pinkNeonMaterial);
+    leftPlate1.rotation.z = Math.PI / 2;
+    leftPlate1.position.x = -0.65;
+    dumbbell.add(leftPlate1);
+
+    const leftPlate2 = new THREE.Mesh(outerPlateGeom, blueNeonMaterial);
+    leftPlate2.rotation.z = Math.PI / 2;
+    leftPlate2.position.x = -0.95;
+    dumbbell.add(leftPlate2);
+
+    // Right Plates
+    const rightPlate1 = new THREE.Mesh(innerPlateGeom, pinkNeonMaterial);
+    rightPlate1.rotation.z = Math.PI / 2;
+    rightPlate1.position.x = 0.65;
+    dumbbell.add(rightPlate1);
+
+    const rightPlate2 = new THREE.Mesh(outerPlateGeom, blueNeonMaterial);
+    rightPlate2.rotation.z = Math.PI / 2;
+    rightPlate2.position.x = 0.95;
+    dumbbell.add(rightPlate2);
+
+    // 3. Collars (Stoppers)
+    const collarGeom = new THREE.CylinderGeometry(0.12, 0.12, 0.1, 16);
+    
+    const leftCollar = new THREE.Mesh(collarGeom, blueNeonMaterial);
+    leftCollar.rotation.z = Math.PI / 2;
+    leftCollar.position.x = -0.45;
+    dumbbell.add(leftCollar);
+
+    const rightCollar = new THREE.Mesh(collarGeom, blueNeonMaterial);
+    rightCollar.rotation.z = Math.PI / 2;
+    rightCollar.position.x = 0.45;
+    dumbbell.add(rightCollar);
+
+    scene.add(dumbbell);
+
+    // Particle field around the dumbbell
+    const particlesCount = 150;
     const positionArray = new Float32Array(particlesCount * 3);
     for (let i = 0; i < particlesCount * 3; i++) {
-      positionArray[i] = (Math.random() - 0.5) * 8;
+      positionArray[i] = (Math.random() - 0.5) * 6;
     }
     const particleGeometry = new THREE.BufferGeometry();
     particleGeometry.setAttribute("position", new THREE.BufferAttribute(positionArray, 3));
@@ -69,10 +108,6 @@ export default function GymCanvas3D() {
     const particles = new THREE.Points(particleGeometry, particleMaterial);
     scene.add(particles);
 
-    // Lights (not strictly needed for BasicMaterial, but good for depth if we expand)
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    scene.add(ambientLight);
-
     // Mouse Interaction
     let mouseX = 0;
     let mouseY = 0;
@@ -80,7 +115,6 @@ export default function GymCanvas3D() {
     let targetY = 0;
 
     const handleMouseMove = (event: MouseEvent) => {
-      // Normalize mouse coordinates (-1 to 1)
       const rect = containerRef.current?.getBoundingClientRect();
       if (!rect) return;
       mouseX = ((event.clientX - rect.left) / width) - 0.5;
@@ -109,14 +143,16 @@ export default function GymCanvas3D() {
       const elapsedTime = clock.getElapsedTime();
 
       // Smooth mouse rotation tracking
-      targetX = mouseX * 0.5;
-      targetY = mouseY * 0.5;
+      targetX = mouseX * 0.8;
+      targetY = mouseY * 0.8;
 
-      torusKnot.rotation.y = elapsedTime * 0.15 + (targetX - torusKnot.rotation.y) * 0.1;
-      torusKnot.rotation.x = elapsedTime * 0.1 + (targetY - torusKnot.rotation.x) * 0.1;
+      // Dumbbell spin + hover effect + tilt with mouse
+      dumbbell.rotation.y = elapsedTime * 0.4 + (targetX - dumbbell.rotation.y) * 0.1;
+      dumbbell.rotation.x = Math.sin(elapsedTime * 0.5) * 0.2 + (targetY - dumbbell.rotation.x) * 0.1;
+      dumbbell.rotation.z = Math.cos(elapsedTime * 0.3) * 0.1;
 
-      core.rotation.y = -elapsedTime * 0.3;
-      core.rotation.x = -elapsedTime * 0.2;
+      // Hover floating effect
+      dumbbell.position.y = Math.sin(elapsedTime * 1.5) * 0.1;
 
       particles.rotation.y = elapsedTime * 0.05;
 
@@ -134,10 +170,12 @@ export default function GymCanvas3D() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
         containerRef.current.removeChild(renderer.domElement);
       }
-      geometry.dispose();
-      material.dispose();
-      coreGeometry.dispose();
-      coreMaterial.dispose();
+      handleGeom.dispose();
+      innerPlateGeom.dispose();
+      outerPlateGeom.dispose();
+      collarGeom.dispose();
+      blueNeonMaterial.dispose();
+      pinkNeonMaterial.dispose();
       particleGeometry.dispose();
       particleMaterial.dispose();
       renderer.dispose();
