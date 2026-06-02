@@ -43,5 +43,10 @@ yarn-error.log*
 next-env.d.ts
 
 
-#folder
+# folder
 .stitch_3d_kinetic_fitness_scroll
+
+# local Claude / MCP configs
+.claude/settings.json
+mcp-servers.json
+
