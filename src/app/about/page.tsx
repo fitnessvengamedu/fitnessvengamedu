@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import GymCanvas3D from "@/components/GymCanvas3D";
 import { Shield, Award, HeartPulse } from "lucide-react";
 
 export default function About() {
@@ -34,14 +33,44 @@ export default function About() {
           </div>
         </motion.div>
 
-        {/* 3D Model Display */}
+        {/* 3D replaced with High-fidelity camera frame */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1 }}
-          className="flex items-center justify-center h-[350px] md:h-[450px] rounded-3xl bg-white/2 border border-glass-stroke shadow-[0_0_40px_rgba(223,255,17,0.03)] overflow-hidden"
+          className="relative flex items-center justify-center h-[350px] md:h-[450px] rounded-3xl bg-white/2 border border-glass-stroke shadow-[0_0_40px_rgba(223,255,17,0.03)] overflow-hidden group cursor-pointer"
         >
-          <GymCanvas3D />
+          <div className="absolute inset-0 bg-gradient-to-tr from-electric-lime/10 via-transparent to-apex-crimson/5 opacity-50 z-10 pointer-events-none group-hover:opacity-80 transition-opacity" />
+          <img 
+            className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700 z-0" 
+            src="/images/gym_2.jpg"
+            alt="Apex Studio Equipment"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-deep-obsidian via-transparent to-transparent z-10" />
+
+          {/* Diagnostic Overlay HUD */}
+          <div className="absolute top-6 left-6 z-20 flex items-center gap-2 bg-deep-obsidian/85 backdrop-blur-md px-3 py-1.5 rounded-full border border-glass-stroke">
+            <span className="w-2.5 h-2.5 rounded-full bg-apex-crimson animate-ping" />
+            <span className="font-mono text-[9px] text-white uppercase tracking-wider font-bold">REC: CHAMBER CH-02</span>
+          </div>
+
+          <div className="absolute bottom-6 left-6 right-6 z-20 bg-deep-obsidian/85 backdrop-blur-md p-4 rounded-2xl border border-glass-stroke space-y-2">
+            <div className="flex justify-between items-center text-[8px] font-mono text-white/40">
+              <span>SYSTEM DIAGNOSTIC: READY</span>
+              <span>10.2 FPS</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="font-mono text-[10px] text-electric-lime font-bold tracking-widest uppercase">
+                LOAD RATIO OK
+              </span>
+              <span className="font-mono text-[9px] text-white/60">
+                TEMP: 21°C
+              </span>
+            </div>
+            <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+              <div className="w-2/3 h-full bg-electric-lime" />
+            </div>
+          </div>
         </motion.div>
       </div>
 

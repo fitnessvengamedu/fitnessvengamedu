@@ -1,10 +1,41 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useMotionValue, useTransform, useSpring, useScroll } from "framer-motion";
 import Link from "next/link";
-import GymCanvas3D from "@/components/GymCanvas3D";
 
 export default function Home() {
+  const heroImgRef = useRef<HTMLDivElement>(null);
+  
+  const x = useMotionValue(0.5);
+  const y = useMotionValue(0.5);
+
+  const rotateX = useTransform(y, [0, 1], [10, -10]);
+  const rotateY = useTransform(x, [0, 1], [-10, 10]);
+
+  const springX = useSpring(rotateX, { stiffness: 150, damping: 20 });
+  const springY = useSpring(rotateY, { stiffness: 150, damping: 20 });
+
+  const { scrollY } = useScroll();
+  const parallaxBgY = useTransform(scrollY, [0, 1000], [0, 150]);
+  const parallaxHeroImgY = useTransform(scrollY, [0, 1000], [0, -60]);
+
+  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (!heroImgRef.current) return;
+    const rect = heroImgRef.current.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+    x.set(mouseX / width);
+    y.set(mouseY / height);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0.5);
+    y.set(0.5);
+  };
+
   return (
     <div className="flex flex-col items-center w-full bg-deep-obsidian min-h-screen relative overflow-hidden">
       
@@ -15,15 +46,16 @@ export default function Home() {
       <section className="relative w-full min-h-[95vh] flex items-center justify-center overflow-hidden px-4 md:px-12 py-20">
         <div className="scanline" />
         
-        {/* Cinematic Background Image from Template */}
-        <div className="absolute inset-0 z-0">
-          <img 
+        {/* Cinematic Background Image with Scroll Parallax */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <motion.img 
+            style={{ y: parallaxBgY }}
             alt="Hero Background" 
-            className="w-full h-full object-cover opacity-35 scale-105" 
+            className="w-full h-[120%] object-cover opacity-35 scale-105 absolute top-0" 
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5YEtLphCg7bRg8kf5JholoqvUY9gyIWJMjOAPcS4iwf4lldo62DEkUL6XLo1Pw0KRucPm_b0d6Gx-XIoJJ9RS6NdIcW4ohIIPWu1d9ET_ru53dXb3C8KhssgPhblv-bcurjNuqlj5lWSePl9pO8DbOF2OBQGD0e-Wf7auyolvE1sCbbu9hQOsFCp8_ayav2xsEwmEzm_ZoAtloGd5YgjvGM3cr3EvF5BK-Ki_gyqkliO14_YDR9lYvV53ndn9H6_4zKP9zx6Yiuc"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-deep-obsidian via-transparent to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-deep-obsidian/85 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-deep-obsidian via-transparent to-transparent z-10" />
+          <div className="absolute inset-0 bg-gradient-to-r from-deep-obsidian/85 via-transparent to-transparent z-10" />
         </div>
 
         <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center z-20">
@@ -58,16 +90,59 @@ export default function Home() {
             </div>
           </motion.div>
 
-          {/* Dumbbell Canvas Frame */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            className="relative flex items-center justify-center glass-card p-6 h-[400px] md:h-[500px] overflow-hidden"
-          >
-            <div className="absolute inset-0 bg-gradient-to-tr from-electric-lime/5 via-transparent to-apex-crimson/5 opacity-40 pointer-events-none" />
-            <GymCanvas3D />
-          </motion.div>
+          {/* Dumbbell Photo Showcase Frame with 3D Tilt Effect */}
+          <div className="perspective-1000 flex items-center justify-center w-full">
+            <motion.div
+              ref={heroImgRef}
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
+              style={{
+                rotateX: springX,
+                rotateY: springY,
+                transformStyle: "preserve-3d",
+              }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="relative w-full max-w-[500px] aspect-[4/3] rounded-2xl border border-glass-stroke glass-card p-4 overflow-hidden group cursor-pointer shadow-[0_20px_50px_rgba(0,0,0,0.8)]"
+            >
+              {/* Scanline and Glow */}
+              <div className="scanline" />
+              <div className="absolute inset-0 bg-gradient-to-tr from-electric-lime/10 via-transparent to-apex-crimson/10 opacity-60 z-10 pointer-events-none transition-opacity duration-300 group-hover:opacity-80" />
+              
+              {/* Image with Parallax & Hover scale */}
+              <div className="w-full h-full overflow-hidden rounded-xl relative">
+                <motion.img 
+                  style={{ y: parallaxHeroImgY }}
+                  className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700 z-0" 
+                  src="/images/gym_2.jpg"
+                  alt="Apex Heavy Dumbbell"
+                />
+              </div>
+
+              {/* High-tech telemetry overlay */}
+              <div className="absolute bottom-6 left-6 right-6 z-20 bg-deep-obsidian/75 backdrop-blur-md p-4 rounded-xl border border-glass-stroke space-y-2 transform translate-z-20">
+                <div className="flex justify-between items-center">
+                  <span className="font-mono text-[9px] text-electric-lime uppercase tracking-widest font-bold">
+                    SYSTEM: ONLINE
+                  </span>
+                  <span className="font-mono text-[9px] text-white/40">
+                    CALIBRATION: ACTIVE
+                  </span>
+                </div>
+                <h4 className="text-lg font-bold text-white font-sora tracking-tight">
+                  KINETIC SYSTEM INITIALIZED
+                </h4>
+                <div className="h-[2px] bg-electric-lime/20 rounded-full overflow-hidden">
+                  <div className="h-full bg-electric-lime w-4/5 animate-pulse" />
+                </div>
+                <div className="flex justify-between text-[9px] text-white/40 font-mono">
+                  <span>LOAD: 30 KG</span>
+                  <span>ACCURACY: 99.8%</span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -80,10 +155,29 @@ export default function Home() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="relative h-[350px] md:h-[450px] glass-card flex items-center justify-center overflow-hidden"
+            className="relative h-[350px] md:h-[450px] glass-card rounded-2xl border border-glass-stroke flex items-center justify-center overflow-hidden group shadow-[0_20px_50px_rgba(0,0,0,0.6)] cursor-pointer"
           >
             <div className="absolute inset-0 bg-electric-lime/5 rounded-full blur-[100px]" />
-            <GymCanvas3D />
+            <img 
+              className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700 z-0" 
+              src="/images/gym_1.jpg"
+              alt="Apex Training Gear"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-deep-obsidian via-deep-obsidian/30 to-transparent z-10" />
+            
+            {/* Live Camera feed box overlay */}
+            <div className="absolute top-6 left-6 z-20 flex items-center gap-2 bg-deep-obsidian/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-glass-stroke">
+              <span className="w-2 h-2 rounded-full bg-electric-lime animate-ping" />
+              <span className="font-mono text-[9px] text-white uppercase tracking-wider">LIVE FEED: CAM-01</span>
+            </div>
+
+            <div className="absolute bottom-6 left-6 right-6 z-20 bg-deep-obsidian/75 backdrop-blur-md p-4 rounded-xl border border-glass-stroke">
+              <div className="flex justify-between items-center mb-1">
+                <span className="font-mono text-[8px] text-electric-lime tracking-widest font-bold">DEVICE SYNCED</span>
+                <span className="font-mono text-[8px] text-white/40">100% SIGNAL</span>
+              </div>
+              <p className="text-xs font-mono text-white/80">KETTLEBELLS / HEX DUMBBELLS / GRIP TECH</p>
+            </div>
           </motion.div>
 
           <motion.div 
