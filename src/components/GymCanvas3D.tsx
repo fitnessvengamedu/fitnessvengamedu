@@ -30,15 +30,15 @@ export default function GymCanvas3D() {
     const dumbbell = new THREE.Group();
 
     // Materials
-    const blueNeonMaterial = new THREE.MeshBasicMaterial({
-      color: 0x00f0ff,
+    const limeNeonMaterial = new THREE.MeshBasicMaterial({
+      color: 0xDFFF11, // Electric Lime
       wireframe: true,
       transparent: true,
       opacity: 0.85,
     });
 
-    const pinkNeonMaterial = new THREE.MeshBasicMaterial({
-      color: 0xff007f,
+    const crimsonNeonMaterial = new THREE.MeshBasicMaterial({
+      color: 0xFF003C, // Apex Crimson
       wireframe: true,
       transparent: true,
       opacity: 0.7,
@@ -46,7 +46,7 @@ export default function GymCanvas3D() {
 
     // 1. Handle (Middle Bar)
     const handleGeom = new THREE.CylinderGeometry(0.08, 0.08, 2.2, 16);
-    const handleMesh = new THREE.Mesh(handleGeom, blueNeonMaterial);
+    const handleMesh = new THREE.Mesh(handleGeom, limeNeonMaterial);
     handleMesh.rotation.z = Math.PI / 2; // Lie horizontally along X-axis
     dumbbell.add(handleMesh);
 
@@ -55,23 +55,23 @@ export default function GymCanvas3D() {
     const outerPlateGeom = new THREE.CylinderGeometry(0.65, 0.65, 0.25, 24);
 
     // Left Plates
-    const leftPlate1 = new THREE.Mesh(innerPlateGeom, pinkNeonMaterial);
+    const leftPlate1 = new THREE.Mesh(innerPlateGeom, crimsonNeonMaterial);
     leftPlate1.rotation.z = Math.PI / 2;
     leftPlate1.position.x = -0.65;
     dumbbell.add(leftPlate1);
 
-    const leftPlate2 = new THREE.Mesh(outerPlateGeom, blueNeonMaterial);
+    const leftPlate2 = new THREE.Mesh(outerPlateGeom, limeNeonMaterial);
     leftPlate2.rotation.z = Math.PI / 2;
     leftPlate2.position.x = -0.95;
     dumbbell.add(leftPlate2);
 
     // Right Plates
-    const rightPlate1 = new THREE.Mesh(innerPlateGeom, pinkNeonMaterial);
+    const rightPlate1 = new THREE.Mesh(innerPlateGeom, crimsonNeonMaterial);
     rightPlate1.rotation.z = Math.PI / 2;
     rightPlate1.position.x = 0.65;
     dumbbell.add(rightPlate1);
 
-    const rightPlate2 = new THREE.Mesh(outerPlateGeom, blueNeonMaterial);
+    const rightPlate2 = new THREE.Mesh(outerPlateGeom, limeNeonMaterial);
     rightPlate2.rotation.z = Math.PI / 2;
     rightPlate2.position.x = 0.95;
     dumbbell.add(rightPlate2);
@@ -79,19 +79,19 @@ export default function GymCanvas3D() {
     // 3. Collars (Stoppers)
     const collarGeom = new THREE.CylinderGeometry(0.12, 0.12, 0.1, 16);
     
-    const leftCollar = new THREE.Mesh(collarGeom, blueNeonMaterial);
+    const leftCollar = new THREE.Mesh(collarGeom, limeNeonMaterial);
     leftCollar.rotation.z = Math.PI / 2;
     leftCollar.position.x = -0.45;
     dumbbell.add(leftCollar);
 
-    const rightCollar = new THREE.Mesh(collarGeom, blueNeonMaterial);
+    const rightCollar = new THREE.Mesh(collarGeom, limeNeonMaterial);
     rightCollar.rotation.z = Math.PI / 2;
     rightCollar.position.x = 0.45;
     dumbbell.add(rightCollar);
 
     scene.add(dumbbell);
 
-    // Particle field around the dumbbell
+    // Particle field around the dumbbell (Lime)
     const particlesCount = 150;
     const positionArray = new Float32Array(particlesCount * 3);
     for (let i = 0; i < particlesCount * 3; i++) {
@@ -101,7 +101,7 @@ export default function GymCanvas3D() {
     particleGeometry.setAttribute("position", new THREE.BufferAttribute(positionArray, 3));
     const particleMaterial = new THREE.PointsMaterial({
       size: 0.02,
-      color: 0x9d00ff,
+      color: 0xDFFF11,
       transparent: true,
       opacity: 0.8,
     });
@@ -174,8 +174,8 @@ export default function GymCanvas3D() {
       innerPlateGeom.dispose();
       outerPlateGeom.dispose();
       collarGeom.dispose();
-      blueNeonMaterial.dispose();
-      pinkNeonMaterial.dispose();
+      limeNeonMaterial.dispose();
+      crimsonNeonMaterial.dispose();
       particleGeometry.dispose();
       particleMaterial.dispose();
       renderer.dispose();

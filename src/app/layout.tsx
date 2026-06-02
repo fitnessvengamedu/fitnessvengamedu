@@ -1,15 +1,25 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Sora, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 import { Dumbbell } from "lucide-react";
 import SmoothScroll from "@/components/SmoothScroll";
 
-const inter = Inter({ subsets: ["latin"] });
+const sora = Sora({ 
+  subsets: ["latin"],
+  variable: "--font-sora",
+  weight: ["400", "700", "800"]
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  weight: ["500"]
+});
 
 export const metadata: Metadata = {
-  title: "Stitch Apex Elite | Fitness Gym",
-  description: "Join the best fitness gym to achieve your goals.",
+  title: "STITCH APEX ELITE | Engineered for Performance",
+  description: "Experience a new dimension of human performance. We merge elite kinetic coaching with biometric data streams.",
 };
 
 export default function RootLayout({
@@ -19,51 +29,55 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.className} min-h-screen flex flex-col bg-background text-foreground`}>
+      <body className={`${sora.variable} ${jetbrainsMono.variable} font-sans min-h-screen flex flex-col bg-deep-obsidian text-foreground antialiased`}>
         <SmoothScroll>
-          {/* Navigation */}
-          <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/50 backdrop-blur-md">
-            <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-              <Link href="/" className="flex items-center gap-2 group">
-                <div className="p-2 bg-blue-600 rounded-lg group-hover:bg-blue-500 transition-colors duration-300 shadow-[0_0_15px_rgba(37,99,235,0.4)]">
-                  <Dumbbell className="w-5 h-5 text-white" />
-                </div>
-                <span className="font-bold text-xl tracking-tight text-glow-blue">Stitch Apex Elite</span>
+          {/* TopNavBar */}
+          <nav className="fixed top-0 w-full bg-background/80 backdrop-blur-xl border-b border-glass-stroke shadow-[0_0_20px_rgba(223,255,17,0.03)] z-50">
+            <div className="flex justify-between items-center px-4 md:px-12 h-20 w-full max-w-7xl mx-auto">
+              <Link href="/" className="font-extrabold text-lg md:text-2xl tracking-tighter text-white font-sora">
+                STITCH <span className="text-electric-lime text-glow">APEX ELITE</span>
               </Link>
               
-              <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
-                <Link href="/" className="text-white/70 hover:text-white hover:text-glow-blue transition-all duration-300">Home</Link>
-                <Link href="/about" className="text-white/70 hover:text-white hover:text-glow-blue transition-all duration-300">About</Link>
-                <Link href="/gallery" className="text-white/70 hover:text-white hover:text-glow-blue transition-all duration-300">Gallery</Link>
-                <Link href="/services" className="text-white/70 hover:text-white hover:text-glow-blue transition-all duration-300">Services</Link>
-              </nav>
+              <div className="hidden md:flex items-center gap-8 font-mono text-xs uppercase tracking-widest">
+                <Link href="/" className="text-electric-lime border-b border-electric-lime pb-1">Training</Link>
+                <Link href="/about" className="text-white/60 hover:text-electric-lime transition-all duration-300">Facility</Link>
+                <Link href="/services" className="text-white/60 hover:text-electric-lime transition-all duration-300">Elite Plans</Link>
+                <Link href="/gallery" className="text-white/60 hover:text-electric-lime transition-all duration-300">Gallery</Link>
+              </div>
 
               <div className="flex items-center gap-4">
-                <Link href="/signin" className="text-sm font-medium text-white/70 hover:text-white transition-colors duration-300">
-                  Sign In
+                <Link href="/signin" className="hidden lg:block text-white/60 hover:text-electric-lime transition-colors font-mono text-xs uppercase tracking-widest">
+                  Member Login
                 </Link>
-                <Link href="/signup" className="primary-button text-sm px-5 py-2 shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.6)]">
-                  Join Now
+                <Link href="/signup" className="primary-btn">
+                  Join Elite
                 </Link>
               </div>
             </div>
-          </header>
+          </nav>
 
           {/* Main Content */}
-          <main className="flex-1">
+          <main className="flex-1 pt-20">
             {children}
           </main>
 
           {/* Footer */}
-          <footer className="border-t border-white/10 bg-black/40 py-12">
-            <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="flex items-center gap-2">
-                <Dumbbell className="w-5 h-5 text-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
-                <span className="font-bold text-lg text-glow-blue">Stitch Apex Elite</span>
+          <footer className="bg-deep-obsidian border-t border-glass-stroke w-full py-12">
+            <div className="flex flex-col md:flex-row justify-between items-center px-4 md:px-12 gap-8 w-full max-w-7xl mx-auto">
+              <div className="flex flex-col items-center md:items-start gap-3">
+                <div className="text-2xl font-bold tracking-tighter text-white font-sora">
+                  STITCH <span className="text-electric-lime">APEX ELITE</span>
+                </div>
+                <p className="text-white/40 font-mono text-[10px] uppercase tracking-widest">
+                  © {new Date().getFullYear()} STITCH APEX ELITE. ENGINEERED FOR PERFORMANCE.
+                </p>
               </div>
-              <p className="text-sm text-white/40">
-                © {new Date().getFullYear()} Stitch Apex Elite. All rights reserved. Developed with futuristic aesthetics.
-              </p>
+              <div className="flex flex-wrap justify-center gap-6 font-mono text-[10px] uppercase tracking-widest">
+                <Link href="#" className="text-white/40 hover:text-electric-lime transition-all">Privacy Protocol</Link>
+                <Link href="#" className="text-white/40 hover:text-electric-lime transition-all">Terms of Service</Link>
+                <Link href="#" className="text-white/40 hover:text-electric-lime transition-all">Telemetry Support</Link>
+                <Link href="#" className="text-white/40 hover:text-electric-lime transition-all">Contact Command</Link>
+              </div>
             </div>
           </footer>
         </SmoothScroll>

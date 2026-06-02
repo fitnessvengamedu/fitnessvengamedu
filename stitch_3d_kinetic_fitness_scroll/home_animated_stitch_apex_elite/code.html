@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>STITCH APEX ELITE | Engineered for Performance</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700;800&amp;family=JetBrains+Mono:wght@500&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        @font-face {
+            font-family: 'geist';
+            src: url('https://fonts.cdnfonts.com/css/geist');
+        }
+        body {
+            background-color: #050505;
+            color: #e5e2e1;
+            overflow-x: hidden;
+            font-family: 'geist', sans-serif;
+            margin: 0;
+        }
+        #scroll-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .glass-card {
+            background: rgba(26, 26, 26, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .text-glow {
+            text-shadow: 0 0 15px rgba(223, 255, 17, 0.3);
+        }
+        .parallax-target {
+            transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .scanline {
+            width: 100%;
+            height: 2px;
+            background: rgba(223, 255, 17, 0.1);
+            position: absolute;
+            top: 0;
+            z-index: 10;
+            animation: scan 8s linear infinite;
+        }
+        @keyframes scan {
+            0% { top: -10%; }
+            100% { top: 110%; }
+        }
+        @keyframes noise {
+            0%, 100% { transform: translate(0, 0) }
+            10% { transform: translate(-5%, -5%) }
+            20% { transform: translate(-10%, 5%) }
+            30% { transform: translate(5%, -10%) }
+            40% { transform: translate(-5%, 15%) }
+            50% { transform: translate(-10%, 5%) }
+            60% { transform: translate(15%, 0) }
+            70% { transform: translate(0, 10%) }
+            80% { transform: translate(-15%, 0) }
+            90% { transform: translate(10%, 5%) }
+        }
+        .noise-overlay {
+            position: absolute;
+            inset: -100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3%3Ffilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 5;
+            animation: noise 1s steps(2) infinite;
+        }
+        @keyframes levitate {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
+        }
+        .animate-levitate {
+            animation: levitate 5s ease-in-out infinite;
+        }
+        .btn-pulse:hover {
+            box-shadow: 0 0 25px rgba(223, 255, 17, 0.6);
+            animation: pulse-glow 1.5s infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(223, 255, 17, 0.4); }
+            50% { box-shadow: 0 0 40px rgba(223, 255, 17, 0.7); }
+        }
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#2c3400",
+                        "on-secondary": "#680012",
+                        "on-error-container": "#ffdad6",
+                        "surface-tint": "#b8d300",
+                        "surface-container-low": "#1c1b1b",
+                        "primary": "#ffffff",
+                        "surface-variant": "#353534",
+                        "electric-lime": "#DFFF11",
+                        "on-surface": "#e5e2e1",
+                        "secondary-fixed": "#ffdad8",
+                        "primary-fixed-dim": "#b8d300",
+                        "on-tertiary-fixed-variant": "#324a52",
+                        "surface": "#131313",
+                        "on-surface-variant": "#c6c9ac",
+                        "inverse-surface": "#e5e2e1",
+                        "on-error": "#690005",
+                        "secondary-container": "#ff525c",
+                        "surface-dim": "#131313",
+                        "primary-container": "#d2f100",
+                        "on-secondary-fixed": "#410008",
+                        "secondary": "#ffb3b2",
+                        "graphite-surface": "#1A1A1A",
+                        "tertiary-fixed": "#cce7f1",
+                        "apex-crimson": "#FF003C",
+                        "tertiary-fixed-dim": "#b0cbd4",
+                        "inverse-primary": "#576500",
+                        "on-secondary-container": "#5b000f",
+                        "on-tertiary": "#1b343b",
+                        "background": "#131313",
+                        "surface-container-high": "#2a2a2a",
+                        "on-primary-container": "#5c6b00",
+                        "error": "#ffb4ab",
+                        "on-tertiary-container": "#4f6871",
+                        "secondary-fixed-dim": "#ffb3b2",
+                        "on-background": "#e5e2e1",
+                        "surface-container-highest": "#353534",
+                        "inverse-on-surface": "#313030",
+                        "on-primary-fixed": "#191e00",
+                        "outline": "#909378",
+                        "deep-obsidian": "#050505",
+                        "on-tertiary-fixed": "#031f26",
+                        "glass-stroke": "rgba(255, 255, 255, 0.12)",
+                        "outline-variant": "#454932",
+                        "surface-container": "#201f1f",
+                        "surface-bright": "#3a3939",
+                        "on-secondary-fixed-variant": "#92001e",
+                        "tertiary": "#ffffff",
+                        "tertiary-container": "#cce7f1",
+                        "on-primary-fixed-variant": "#414c00",
+                        "error-container": "#93000a",
+                        "primary-fixed": "#d2f100",
+                        "surface-container-lowest": "#0e0e0e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "gutter-sm": "16px",
+                        "margin-desktop": "80px",
+                        "gutter-md": "24px",
+                        "margin-mobile": "20px",
+                        "max-width": "1440px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["geist"],
+                        "headline-lg": ["sora"],
+                        "display-xl": ["sora"],
+                        "headline-lg-mobile": ["sora"],
+                        "telemetry-label": ["jetbrainsMono"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "display-xl": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "800"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "telemetry-label": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-deep-obsidian selection:bg-electric-lime selection:text-deep-obsidian">
+<div id="scroll-container">
+<div id="smooth-content">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full bg-background/80 backdrop-blur-xl border-b border-glass-stroke shadow-[0_0_20px_rgba(223,255,17,0.05)] z-50">
+<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-20 w-full max-w-max-width mx-auto">
+<div class="text-headline-lg-mobile font-headline-lg-mobile tracking-tighter text-primary">STITCH APEX ELITE</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-electric-lime border-b-2 border-electric-lime pb-1 font-body-md text-body-md" href="#">Training</a>
+<a class="text-on-surface-variant hover:text-electric-lime transition-colors duration-300 font-body-md text-body-md" href="#">Facility</a>
+<a class="text-on-surface-variant hover:text-electric-lime transition-colors duration-300 font-body-md text-body-md" href="#">Elite Plans</a>
+<a class="text-on-surface-variant hover:text-electric-lime transition-colors duration-300 font-body-md text-body-md" href="#">Gallery</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="hidden lg:block text-on-surface-variant hover:text-electric-lime transition-colors font-telemetry-label text-telemetry-label uppercase tracking-widest active:scale-95 transition-transform">Member Login</button>
+<button class="bg-electric-lime text-deep-obsidian px-6 py-2.5 rounded-lg font-telemetry-label text-telemetry-label uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(223,255,17,0.4)] btn-pulse active:scale-95 transition-transform">Join Elite</button>
+</div>
+</div>
+</nav>
+<main>
+<!-- Hero Section -->
+<section class="relative h-screen min-h-[800px] flex items-center overflow-hidden">
+<div class="absolute inset-0 z-0">
+<div class="noise-overlay"></div>
+<img alt="Hero Background" class="w-full h-full object-cover opacity-60 scale-110 parallax-bg" data-speed="0.15" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5YEtLphCg7bRg8kf5JholoqvUY9gyIWJMjOAPcS4iwf4lldo62DEkUL6XLo1Pw0KRucPm_b0d6Gx-XIoJJ9RS6NdIcW4ohIIPWu1d9ET_ru53dXb3C8KhssgPhblv-bcurjNuqlj5lWSePl9pO8DbOF2OBQGD0e-Wf7auyolvE1sCbbu9hQOsFCp8_ayav2xsEwmEzm_ZoAtloGd5YgjvGM3cr3EvF5BK-Ki_gyqkliO14_YDR9lYvV53ndn9H6_4zKP9zx6Yiuc"/>
+<div class="absolute inset-0 bg-gradient-to-t from-deep-obsidian via-transparent to-transparent"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-deep-obsidian/80 via-transparent to-transparent"></div>
+<div class="scanline"></div>
+</div>
+<div class="absolute inset-0 z-10 pointer-events-none">
+<div class="parallax-target absolute top-[20%] right-[15%] opacity-40 animate-levitate" data-depth="0.15">
+<span class="material-symbols-outlined text-[140px] text-electric-lime/30 rotate-12">fitness_center</span>
+</div>
+<div class="parallax-target absolute bottom-[25%] left-[5%] opacity-30 animate-levitate" data-depth="0.25" style="animation-delay: -2s;">
+<span class="material-symbols-outlined text-[200px] text-white/10 -rotate-6">monitoring</span>
+</div>
+</div>
+<div class="relative z-20 px-margin-mobile md:px-margin-desktop w-full max-w-max-width mx-auto">
+<div class="max-w-3xl space-y-8 reveal">
+<div class="flex items-center gap-4 text-electric-lime">
+<div class="h-px w-12 bg-electric-lime"></div>
+<span class="font-telemetry-label text-telemetry-label uppercase tracking-[0.3em]">System Initialized: Apex Elite</span>
+</div>
+<h1 class="font-display-xl text-display-xl text-primary leading-tight">
+                            TRANSCEND YOUR <br/>
+<span class="text-electric-lime text-glow">PHYSICAL PEAK</span>
+</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl text-lg leading-relaxed">
+                            Experience a new dimension of human performance. We merge elite kinetic coaching with biometric data streams to engineer the ultimate athlete.
+                        </p>
+<div class="flex flex-wrap gap-6 pt-4">
+<button class="bg-electric-lime text-deep-obsidian px-10 py-5 rounded-lg font-telemetry-label text-telemetry-label uppercase tracking-widest font-extrabold btn-pulse transition-all active:scale-95">
+                                Initialize Protocol
+                            </button>
+<button class="border border-glass-stroke text-primary backdrop-blur-md px-10 py-5 rounded-lg font-telemetry-label text-telemetry-label uppercase tracking-widest font-bold hover:bg-white/10 transition-all active:scale-95">
+                                View Facility
+                            </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Equipment Showcase Section -->
+<section class="py-24 px-margin-mobile md:px-margin-desktop w-full max-w-max-width mx-auto bg-surface/30">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+<div class="relative h-[500px] flex items-center justify-center reveal">
+<div class="absolute inset-0 bg-electric-lime/5 rounded-full blur-[100px]"></div>
+<!-- Floating 3D Component Representation -->
+<div class="relative z-10 flex flex-col items-center gap-8 animate-levitate">
+<span class="material-symbols-outlined text-[180px] text-electric-lime text-glow">exercise</span>
+<div class="flex gap-4">
+<div class="w-16 h-16 rounded-full glass-card flex items-center justify-center animate-levitate" style="animation-delay: -1s">
+<span class="material-symbols-outlined text-primary">weight</span>
+</div>
+<div class="w-16 h-16 rounded-full glass-card flex items-center justify-center animate-levitate" style="animation-delay: -3s">
+<span class="material-symbols-outlined text-primary">sprint</span>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-8 reveal">
+<span class="font-telemetry-label text-telemetry-label text-electric-lime uppercase tracking-widest">3D Precision Gear</span>
+<h2 class="font-headline-lg text-headline-lg text-primary">CARBON-FIBER <br/>ENGINEERING</h2>
+<p class="font-body-md text-body-md text-on-surface-variant text-lg">
+                            Our facility features exclusively designed carbon-fiber dumbbells and tech-integrated resistance machines. Each piece of equipment communicates directly with your Apex profile to calibrate resistance in real-time.
+                        </p>
+<div class="grid grid-cols-2 gap-6">
+<div class="glass-card p-4 rounded-xl border-l-2 border-electric-lime">
+<p class="font-telemetry-label text-[10px] text-on-surface-variant uppercase mb-2">Build Quality</p>
+<p class="text-xl font-bold">Aerospace Grade</p>
+</div>
+<div class="glass-card p-4 rounded-xl border-l-2 border-electric-lime">
+<p class="font-telemetry-label text-[10px] text-on-surface-variant uppercase mb-2">Connectivity</p>
+<p class="text-xl font-bold">Live Telemetry</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Features Bento Grid -->
+<section class="py-32 px-margin-mobile md:px-margin-desktop w-full max-w-max-width mx-auto">
+<div class="mb-16 space-y-4 reveal">
+<h2 class="font-headline-lg text-headline-lg text-primary">ELITE CAPABILITIES</h2>
+<div class="h-1 w-24 bg-electric-lime"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter-md">
+<!-- High Performance Training -->
+<div class="md:col-span-8 group relative h-[500px] overflow-hidden rounded-xl border border-glass-stroke glass-card reveal">
+<div class="absolute inset-0">
+<img class="w-full h-full object-cover opacity-40 group-hover:scale-110 transition-transform duration-1000" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBj0_ArIDFYBYFcH2Lb0OhA56nW4Bh4Y_7gnHPQlRVF3tT5TId693FnEgeNKw3tIXohmQnW0VtdFK446wD9h8tF6JDZWnbdoA6GZacVVdTqNe_N8vjaArNHeFEFXdM4EfiS-uDQx28iL14ITHPF4Nw4jKcgRuWGNdx-XybewuztlWKAhCpVUF6DWudRbRLdaBqtjnS9Ig-y13psh8VghUobnhypJnyTGVwY0FUs9Wc-92z5TrVpZJay4SDoiYuwDaTyT2eT_Oh1uDc"/>
+<div class="absolute inset-0 bg-gradient-to-t from-deep-obsidian via-transparent to-transparent"></div>
+</div>
+<div class="absolute bottom-0 left-0 p-10 space-y-4">
+<span class="font-telemetry-label text-telemetry-label bg-electric-lime/10 text-electric-lime px-3 py-1 rounded">01 / PERFORMANCE</span>
+<h3 class="font-headline-lg text-headline-lg text-primary">KINETIC REVOLUTION</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md">Precision-engineered strength cycles developed for world-class athletes and high-performers.</p>
+</div>
+</div>
+<!-- Technical Coaching -->
+<div class="md:col-span-4 group relative h-[500px] overflow-hidden rounded-xl border border-glass-stroke glass-card reveal">
+<div class="absolute inset-0">
+<img class="w-full h-full object-cover opacity-40 group-hover:scale-110 transition-transform duration-1000" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvXrjtNn8k54v-lMF94AQwU7IWWg4r6VtbAEF60PtJTfkMbmyPEJR9tO680L8sEqE1T1_7-BUkEp6T8P-203rjHOJM3-4n9Rltc304zLZPqeo369x-i1LDehIb3SjzcESCNFVErOUW91ZjwgR5RhMhaBeqPKmzSkRCgMbnJboKzfW36BsCnGhAoT_AfmDxpjnxM4vG8kRcWbL8vcys2l9yCgFCnK5T1_5KF6qpLQRYchjVBpuPMeI126yNax-aDaQc62RBlTh55TU"/>
+</div>
+<div class="absolute bottom-0 left-0 p-8 space-y-4">
+<span class="font-telemetry-label text-telemetry-label bg-electric-lime/10 text-electric-lime px-3 py-1 rounded">02 / COACHING</span>
+<h3 class="font-headline-lg-mobile text-headline-lg-mobile text-primary">BIOMETRIC MASTERY</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Real-time telemetry and motion capture analysis for every session.</p>
+</div>
+</div>
+<!-- Elite Recovery -->
+<div class="md:col-span-12 group relative h-[400px] overflow-hidden rounded-xl border border-glass-stroke glass-card reveal">
+<div class="absolute inset-0">
+<img class="w-full h-full object-cover opacity-30 group-hover:scale-105 transition-transform duration-1000" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIAJ1haPxAK0dM-B4mgX4lNEfriFcvM-UNIuNiqfLGKvYlUXs_IBZSwn9cFh2r2AUwukuxRwcgACQrLV4OA1rXU8wy7rIp3GqGhLxiZhOu0EeGb8P1Atg2xtnKQ3POB7ij7JKojBa9noaXqVq5I4ubSUp6oEiNjecSbpawpxtbsEi_qQOkoJ1t1_cdYKhucc0Q1X-wFvQimhBV3z02iHKJUOHsjr0Dn9SO6wChM7_QrvTgXA2hyzO7MqOi6MC1g05HpVNfEmg9FZ0"/>
+<div class="absolute inset-0 bg-gradient-to-r from-deep-obsidian via-transparent to-transparent"></div>
+</div>
+<div class="absolute inset-0 flex items-center px-10">
+<div class="max-w-xl space-y-4">
+<span class="font-telemetry-label text-telemetry-label bg-electric-lime/10 text-electric-lime px-3 py-1 rounded">03 / RECOVERY</span>
+<h3 class="font-headline-lg text-headline-lg text-primary">NEURAL RESET</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Cryogenic and infrared protocols designed to accelerate cellular regeneration and central nervous system recovery.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Data Integration Section -->
+<section class="relative py-24 bg-surface overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img alt="Data Visuals" class="w-full h-full object-cover opacity-40 parallax-bg scale-110" data-speed="0.1" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAims_Kusqdsg9IcJLoksmx1cOV_1RSHoQp1tm5xTd-rtqgq8CsA6S0Bo0pAdwCmbNKKf5aV-KTZUyLBleEDyChgDOU57t-Dm67h9MPKfKEnC-xGRZd90mhmNLwVr60EeCiwQUahdvKI0FQ4WbkEGrT6fOikBCZUjk0onlHB4fzsYhthhVqodi1d22eRc7PkWCPM3SxzNJemQxqxvEYQ_Lk8YFO7aMmv7fulmto3KSXGVSHJIA6_h_C_RHzausViJ1Wz12Iw90wKUw"/>
+<div class="absolute inset-0 bg-deep-obsidian/80 backdrop-blur-sm"></div>
+</div>
+<div class="relative z-10 px-margin-mobile md:px-margin-desktop w-full max-w-max-width mx-auto flex flex-col md:flex-row items-center gap-16">
+<div class="w-full md:w-1/2 space-y-8 reveal">
+<h2 class="font-headline-lg text-headline-lg text-primary leading-tight">TELEMETRY-DRIVEN <br/><span class="text-electric-lime">EVOLUTION</span></h2>
+<p class="font-body-md text-body-md text-on-surface-variant text-lg">Every heartbeat, power-stroke, and calorie is tracked through our Apex Cloud. We don't guess. We measure, analyze, and optimize your path to the elite tier.</p>
+<div class="grid grid-cols-2 gap-8">
+<div class="border-l-2 border-electric-lime pl-4">
+<div class="font-telemetry-label text-telemetry-label text-on-surface-variant uppercase mb-1">VO2 MAX GAIN</div>
+<div class="text-3xl font-headline-lg text-primary">+14% avg</div>
+</div>
+<div class="border-l-2 border-electric-lime pl-4">
+<div class="font-telemetry-label text-telemetry-label text-on-surface-variant uppercase mb-1">RECOVERY SPEED</div>
+<div class="text-3xl font-headline-lg text-primary">2.4X faster</div>
+</div>
+</div>
+</div>
+<div class="w-full md:w-1/2 reveal">
+<div class="space-y-6">
+<div class="glass-card p-6 rounded-xl border-l-4 border-l-on-surface-variant/30 hover:border-l-electric-lime transition-all cursor-pointer group">
+<div class="flex justify-between items-center">
+<div>
+<h4 class="font-headline-lg-mobile text-headline-lg-mobile text-primary">CORE</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">The entry point to performance.</p>
+</div>
+<div class="text-right">
+<div class="text-2xl font-bold text-primary">$199</div>
+<div class="font-telemetry-label text-telemetry-label text-on-surface-variant uppercase">PER MONTH</div>
+</div>
+</div>
+</div>
+<div class="glass-card p-8 rounded-xl border-l-4 border-l-electric-lime bg-electric-lime/5 shadow-[0_0_40px_rgba(223,255,17,0.1)] relative group">
+<div class="absolute -top-3 right-8 bg-electric-lime text-deep-obsidian px-3 py-1 font-telemetry-label text-[10px] font-bold tracking-widest rounded-full uppercase">Most Recommended</div>
+<div class="flex justify-between items-center">
+<div>
+<h4 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary">ELITE APEX</h4>
+<p class="font-body-md text-body-md text-electric-lime/80">Full telemetry &amp; dedicated performance director.</p>
+</div>
+<div class="text-right">
+<div class="text-3xl font-bold text-electric-lime">$499</div>
+<div class="font-telemetry-label text-telemetry-label text-on-surface-variant uppercase">PER MONTH</div>
+</div>
+</div>
+<div class="mt-6 flex gap-2 overflow-hidden">
+<div class="h-1 flex-1 bg-electric-lime/20 rounded-full overflow-hidden">
+<div class="h-full bg-electric-lime w-3/4 animate-pulse"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="py-32 px-margin-mobile md:px-margin-desktop w-full max-w-max-width mx-auto text-center">
+<div class="glass-card rounded-2xl py-20 px-8 relative overflow-hidden reveal">
+<div class="absolute top-0 left-0 w-full h-full pointer-events-none opacity-10">
+<div class="absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,transparent_25%,rgba(223,255,17,0.4)_50%,transparent_75%)] bg-[length:250%_250%] animate-[shimmer_5s_infinite_linear]"></div>
+</div>
+<h2 class="font-display-xl text-headline-lg md:text-display-xl text-primary mb-8 tracking-tighter">READY FOR THE NEXT <br/> <span class="text-electric-lime">EVOLUTION?</span></h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto mb-12 text-xl">The protocol begins when you do. Secure your spot in the apex elite facility today.</p>
+<button class="bg-electric-lime text-deep-obsidian px-12 py-6 rounded-lg font-telemetry-label text-telemetry-label uppercase tracking-[0.2em] font-extrabold shadow-[0_0_40px_rgba(223,255,17,0.3)] btn-pulse hover:scale-105 active:scale-95 transition-all">
+                        Apply for Access
+                    </button>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-deep-obsidian border-t border-glass-stroke w-full py-12">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop gap-gutter-md w-full max-w-max-width mx-auto">
+<div class="flex flex-col items-center md:items-start gap-4">
+<div class="text-headline-lg font-headline-lg text-primary">STITCH APEX ELITE</div>
+<p class="text-on-surface-variant font-telemetry-label text-telemetry-label uppercase tracking-widest">© 2024 STITCH APEX ELITE. ENGINEERED FOR PERFORMANCE.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="text-on-surface-variant hover:text-electric-lime transition-all font-telemetry-label text-telemetry-label uppercase tracking-widest" href="#">Privacy Protocol</a>
+<a class="text-on-surface-variant hover:text-electric-lime transition-all font-telemetry-label text-telemetry-label uppercase tracking-widest" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-electric-lime transition-all font-telemetry-label text-telemetry-label uppercase tracking-widest" href="#">Telemetry Support</a>
+<a class="text-on-surface-variant hover:text-electric-lime transition-all font-telemetry-label text-telemetry-label uppercase tracking-widest" href="#">Contact Command</a>
+</div>
+</div>
+</footer>
+</div>
+</div>
+<script>
+    // --- Smooth Scroll Logic (Lerp/Easing) ---
+    const scrollContainer = document.getElementById('scroll-container');
+    const scrollContent = document.getElementById('smooth-content');
+    
+    let currentScroll = 0;
+    let targetScroll = 0;
+    const ease = 0.075;
+
+    function smoothScroll() {
+        targetScroll = window.pageYOffset;
+        currentScroll += (targetScroll - currentScroll) * ease;
+        
+        scrollContent.style.transform = `translate3d(0, -${currentScroll}px, 0)`;
+        
+        // Background Parallax based on current scroll
+        const parallaxBgs = document.querySelectorAll('.parallax-bg');
+        parallaxBgs.forEach(bg => {
+            const speed = bg.getAttribute('data-speed') || 0.1;
+            const yPos = currentScroll * speed;
+            bg.style.transform = `translate3d(0, ${yPos}px, 0) scale(1.1)`;
+        });
+
+        requestAnimationFrame(smoothScroll);
+    }
+
+    // Initialize container height to allow native scroll events
+    function updateBodyHeight() {
+        document.body.style.height = `${scrollContent.getBoundingClientRect().height}px`;
+    }
+
+    window.addEventListener('resize', updateBodyHeight);
+    updateBodyHeight();
+    requestAnimationFrame(smoothScroll);
+
+    // --- Parallax 3D Elements (Mouse) ---
+    document.addEventListener('mousemove', (e) => {
+        const targets = document.querySelectorAll('.parallax-target');
+        const mouseX = (e.clientX / window.innerWidth) - 0.5;
+        const mouseY = (e.clientY / window.innerHeight) - 0.5;
+
+        targets.forEach(target => {
+            const depth = target.getAttribute('data-depth') || 0.1;
+            const moveX = mouseX * (depth * 500);
+            const moveY = mouseY * (depth * 500);
+            target.style.transform = `translate3d(${moveX}px, ${moveY}px, 0)`;
+        });
+    });
+
+    // --- Intersection Observer for Entrance Animations ---
+    const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -100px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal').forEach(el => {
+        observer.observe(el);
+    });
+
+    // --- Simple smooth scroll for anchors (adjusting for custom scroll) ---
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const id = this.getAttribute('href');
+            if (id === '#') return;
+            const targetEl = document.querySelector(id);
+            if (targetEl) {
+                window.scrollTo({
+                    top: targetEl.offsetTop,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // Re-calculate height after images load
+    window.addEventListener('load', updateBodyHeight);
+</script>
+</body></html>

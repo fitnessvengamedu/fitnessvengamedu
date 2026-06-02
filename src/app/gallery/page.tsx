@@ -1,61 +1,63 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Image as ImageIcon, RefreshCw } from "lucide-react";
+import { RefreshCw, Play } from "lucide-react";
 
 export default function Gallery() {
   return (
-    <div className="container mx-auto px-4 py-24 bg-background">
-      <div className="text-center mb-16">
+    <div className="container mx-auto px-4 py-24 bg-deep-obsidian">
+      {/* Title */}
+      <div className="text-center mb-24 max-w-2xl mx-auto">
         <motion.h1 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-4xl md:text-6xl font-extrabold mb-4 tracking-wide"
+          className="text-4xl md:text-6xl font-extrabold tracking-tighter font-sora text-white leading-tight mb-4"
         >
-          Apex <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-blue to-neon-pink text-glow-blue">Event Telemetry</span>
+          TELEMETRY <span className="text-electric-lime text-glow">MEDIA STREAM</span>
         </motion.h1>
-        <p className="text-white/60 max-w-2xl mx-auto text-lg">
-          Synchronizing real-time event logs, powerlifting galleries, and workout capture feeds.
+        <p className="text-white/60 text-base leading-relaxed">
+          Google Drive sync pipeline initialized. Live media feed connected to active event indices.
         </p>
       </div>
 
-      {/* Pulsing Sync State card */}
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8 }}
-        className="glass-card p-12 flex flex-col items-center justify-center min-h-[300px] text-center mb-16 box-glow-blue border-neon-blue/20"
-      >
-        <RefreshCw className="w-12 h-12 text-neon-blue mb-6 animate-spin" />
-        <h2 className="text-2xl font-bold mb-2">Automated Asset Pipeline</h2>
-        <p className="text-white/60 max-w-md">
-          Connecting to remote Google Drive event directories via Supabase Storage triggers...
-        </p>
-        <p className="text-neon-pink text-sm mt-4 tracking-widest font-bold uppercase text-glow-pink">
-          Listening for Admin Asset Push
-        </p>
-      </motion.div>
+      {/* Sync Status dashboard */}
+      <div className="max-w-5xl mx-auto glass-card p-8 mb-16 border-l-4 border-l-electric-lime shadow-[0_0_20px_rgba(223,255,17,0.02)]">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex items-center gap-4">
+            <div className="relative flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-electric-lime opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-electric-lime"></span>
+            </div>
+            <div>
+              <p className="font-mono text-xs uppercase tracking-widest text-white/40">Status: Active</p>
+              <h3 className="text-lg font-bold font-sora text-white">Google Drive Stream Online</h3>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <button className="flex items-center gap-2 border border-glass-stroke hover:border-electric-lime/30 text-white/80 hover:text-white px-5 py-2.5 rounded-lg text-xs font-mono uppercase tracking-widest transition-all">
+              <RefreshCw className="w-3.5 h-3.5" /> Re-sync Stream
+            </button>
+          </div>
+        </div>
+      </div>
 
-      {/* Empty gallery slots with neon borders to represent grid awaiting load */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {[...Array(6)].map((_, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0.3, y: 15 }}
-            animate={{ opacity: [0.3, 0.6, 0.3] }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              delay: i * 0.4
-            }}
-            className="h-64 rounded-2xl border border-white/5 bg-white/2 flex flex-col items-center justify-center relative overflow-hidden group hover:border-neon-blue/20 hover:bg-white/5 transition-all duration-300"
-          >
-            <div className="absolute inset-0 bg-gradient-to-t from-neon-blue/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            <ImageIcon className="w-8 h-8 text-white/10 group-hover:text-neon-blue/30 transition-colors" />
-            <span className="text-xs text-white/20 mt-3 tracking-wider uppercase font-medium group-hover:text-white/40">
-              Channel [{i + 1}] Awaiting Feed
-            </span>
-          </motion.div>
+      {/* Grid boxes / Skeletons */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        {[1, 2, 3, 4, 5, 6].map((item) => (
+          <div key={item} className="glass-card overflow-hidden group border border-glass-stroke aspect-video relative flex flex-col justify-between p-6">
+            <div className="absolute inset-0 bg-gradient-to-tr from-electric-lime/5 via-transparent to-transparent opacity-30 z-0" />
+            <div className="flex justify-between items-start z-10">
+              <span className="font-mono text-[9px] uppercase tracking-widest bg-white/5 border border-glass-stroke px-2 py-0.5 rounded text-white/60">
+                FRAME-{item.toString().padStart(3, '0')}
+              </span>
+              <div className="w-2.5 h-2.5 rounded-full bg-electric-lime animate-pulse shadow-[0_0_10px_rgba(223,255,17,0.6)]" />
+            </div>
+            <div className="space-y-2 z-10">
+              <p className="font-mono text-[9px] text-electric-lime uppercase tracking-widest">Awaiting Media Feed...</p>
+              <div className="h-4 bg-white/5 rounded w-3/4 animate-pulse" />
+              <div className="h-3 bg-white/5 rounded w-1/2 animate-pulse" />
+            </div>
+          </div>
         ))}
       </div>
     </div>
