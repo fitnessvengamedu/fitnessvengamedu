@@ -57,6 +57,9 @@ export default async function DashboardPage({
   const fitnessGoal = profile?.fitness_goal || metadata.fitness_goal || ''
   const targetWeight = profile?.target_weight || metadata.target_weight || ''
   const targetCalories = profile?.target_calories || metadata.target_calories || ''
+  const targetTimeframe = profile?.target_timeframe || metadata.target_timeframe || ''
+  const dailyLogs = profile?.daily_logs || metadata.daily_logs || []
+  const goalsList = profile?.goals_list || metadata.goals_list || []
 
   // Determine period stay from active subscription plan
   let periodStayMonths = 1
@@ -184,6 +187,9 @@ export default async function DashboardPage({
             initialGoal={fitnessGoal} 
             initialWeight={targetWeight} 
             initialCalories={targetCalories} 
+            initialTimeframe={targetTimeframe}
+            initialGoalsList={goalsList}
+            dailyLogs={dailyLogs}
           />
         </div>
 
