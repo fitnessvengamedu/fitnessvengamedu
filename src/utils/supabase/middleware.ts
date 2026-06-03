@@ -63,7 +63,8 @@ export async function updateSession(request: NextRequest) {
 
   // Define protected routes that require login
   const isProtectedRoute = request.nextUrl.pathname.startsWith('/dashboard') || 
-                           request.nextUrl.pathname.startsWith('/admin')
+                           request.nextUrl.pathname.startsWith('/admin') ||
+                           request.nextUrl.pathname.startsWith('/reset-password')
 
   // If there's no user and the route is protected, redirect to login
   if (isProtectedRoute && !user) {

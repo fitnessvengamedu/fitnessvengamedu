@@ -1,29 +1,31 @@
 'use client'
 
 import { useState } from 'react'
-import { signin } from './actions'
+import { forgotPassword } from './actions'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 
-export default function SignInPage() {
-  const router = useRouter()
+export default function ForgotPasswordPage() {
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
-    
+    setSuccess(null)
+
     const formData = new FormData(e.currentTarget)
-    const result = await signin(formData)
+    // Pass the client's current origin dynamically to ensure correct redirection on all domains/ports
+    const origin = typeof window !== 'undefined' ? window.location.origin : ''
     
+    const result = await forgotPassword(formData, origin)
+
+    setLoading(false)
     if (result?.error) {
       setError(result.error)
-      setLoading(false)
     } else if (result?.success) {
-      router.push('/dashboard')
-      router.refresh()
+      setSuccess(result.success)
     }
   }
 
@@ -34,8 +36,8 @@ export default function SignInPage() {
       
       <div className="w-full max-w-md bg-glass-panel border border-glass-stroke p-8 rounded-2xl shadow-2xl relative z-10 backdrop-blur-xl">
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-extrabold text-white font-sora tracking-tight">MEMBER <span className="text-electric-lime">ACCESS</span></h1>
-          <p className="text-white/50 text-sm mt-2 font-inter">Enter your credentials to access your profile.</p>
+          <h1 className="text-3xl font-extrabold text-white font-sora tracking-tight">RECOVER <span className="text-electric-lime">PROFILE</span></h1>
+          <p className="text-white/50 text-sm mt-2 font-inter">Enter your email to receive a password reset link.</p>
         </div>
 
         {error && (
@@ -44,9 +46,15 @@ export default function SignInPage() {
           </div>
         )}
 
+        {success && (
+          <div className="bg-electric-lime/10 border border-electric-lime/30 text-electric-lime p-3 rounded-lg text-sm mb-6 font-mono text-center">
+            {success}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <label className="text-xs text-white/70 font-mono uppercase tracking-wider ml-1">Email</label>
+            <label className="text-xs text-white/77 font-mono uppercase tracking-wider ml-1">Email Address</label>
             <input 
               name="email"
               type="email" 
@@ -56,33 +64,19 @@ export default function SignInPage() {
             />
           </div>
 
-          <div className="space-y-2">
-            <div className="flex justify-between items-center ml-1">
-              <label className="text-xs text-white/70 font-mono uppercase tracking-wider">Password</label>
-              <Link href="/forgot-password" className="text-xs text-electric-lime hover:underline font-mono uppercase tracking-wider">
-                Forgot Password?
-              </Link>
-            </div>
-            <input 
-              name="password"
-              type="password" 
-              required
-              className="w-full bg-deep-obsidian/50 border border-glass-stroke rounded-lg px-4 py-3 text-white placeholder-white/20 focus:outline-none focus:border-electric-lime/50 transition-colors"
-              placeholder="••••••••"
-            />
-          </div>
-
           <button 
             type="submit" 
             disabled={loading}
             className="w-full py-4 bg-electric-lime text-deep-obsidian font-extrabold tracking-widest uppercase rounded-lg hover:bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(223,255,17,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)]"
           >
-            {loading ? 'AUTHENTICATING...' : 'LOGIN TO TERMINAL'}
+            {loading ? 'SENDING LINK...' : 'SEND RESET LINK'}
           </button>
         </form>
 
-        <div className="mt-8 text-center text-sm text-white/50">
-          Don't have a profile yet? <Link href="/signup" className="text-electric-lime hover:underline">Join Elite</Link>
+        <div className="mt-8 text-center text-sm text-white/50 space-y-2">
+          <div>
+            Remembered your password? <Link href="/signin" className="text-electric-lime hover:underline">Sign In</Link>
+          </div>
         </div>
       </div>
     </div>
