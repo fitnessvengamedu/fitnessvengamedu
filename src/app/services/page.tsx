@@ -1,8 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Link from "next/link";
-import { Check, Flame } from "lucide-react";
+import { Check, Flame, QrCode } from "lucide-react";
+import RazorpayCheckoutButton from "@/components/RazorpayCheckoutButton";
+import RazorpayQRCode from "@/components/RazorpayQRCode";
 
 export default function Services() {
   const plans = [
@@ -15,7 +16,8 @@ export default function Services() {
       glow: "hover:box-glow-lime hover:border-electric-lime/30",
       accent: "text-white",
       iconColor: "text-electric-lime",
-      btnStyle: "secondary-btn py-4 w-full text-center"
+      btnStyle: "secondary-btn py-4 w-full text-center",
+      planId: process.env.NEXT_PUBLIC_RAZORPAY_PLAN_MONTHLY
     },
     {
       name: "Apex Elite (6-Months)",
@@ -32,7 +34,8 @@ export default function Services() {
       glow: "box-glow-lime border-electric-lime/40 scale-105 z-10 bg-electric-lime/5",
       accent: "text-electric-lime",
       iconColor: "text-electric-lime",
-      btnStyle: "primary-btn py-4 w-full text-center shadow-[0_0_20px_rgba(223,255,17,0.3)]"
+      btnStyle: "primary-btn py-4 w-full text-center shadow-[0_0_20px_rgba(223,255,17,0.3)]",
+      planId: process.env.NEXT_PUBLIC_RAZORPAY_PLAN_HALFYEARLY
     },
     {
       name: "Yearly Immortal",
@@ -49,7 +52,8 @@ export default function Services() {
       glow: "hover:box-glow-lime hover:border-electric-lime/30",
       accent: "text-white",
       iconColor: "text-electric-lime",
-      btnStyle: "secondary-btn py-4 w-full text-center"
+      btnStyle: "secondary-btn py-4 w-full text-center",
+      planId: process.env.NEXT_PUBLIC_RAZORPAY_PLAN_YEARLY
     }
   ];
 
@@ -68,7 +72,7 @@ export default function Services() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-6xl mx-auto items-stretch">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-6xl mx-auto items-stretch mb-24">
         {plans.map((plan, i) => (
           <motion.div 
             key={i} 
@@ -102,12 +106,34 @@ export default function Services() {
               ))}
             </ul>
 
-            <Link href="/signup" className={`${plan.btnStyle}`}>
-              Initiate Plan
-            </Link>
+            <RazorpayCheckoutButton planId={plan.planId} className={plan.btnStyle}>
+              INITIATE PLAN
+            </RazorpayCheckoutButton>
           </motion.div>
         ))}
       </div>
+
+      {/* QR Code Alternative Payment Section */}
+      <motion.div 
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="max-w-3xl mx-auto glass-card border border-glass-stroke p-12 text-center relative overflow-hidden"
+      >
+        <div className="absolute top-0 right-0 w-64 h-64 bg-electric-lime/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+        
+        <div className="flex items-center justify-center gap-3 mb-6">
+          <QrCode className="w-8 h-8 text-electric-lime" />
+          <h2 className="text-3xl font-extrabold font-sora text-white">ALTERNATIVE PAYMENT</h2>
+        </div>
+        
+        <p className="text-white/60 text-sm mb-10 max-w-lg mx-auto">
+          Prefer to pay directly? Scan the official Razorpay QR code below using any UPI app (GPay, PhonePe, Paytm). 
+          Please send payment confirmation to administration to activate your plan manually.
+        </p>
+
+        <RazorpayQRCode />
+      </motion.div>
     </div>
   );
 }

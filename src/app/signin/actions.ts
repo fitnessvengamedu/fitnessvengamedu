@@ -12,7 +12,7 @@ export async function signin(formData: FormData) {
     return { error: 'Email and password are required.' }
   }
 
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { error } = await supabase.auth.signInWithPassword({
     email,

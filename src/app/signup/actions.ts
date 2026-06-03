@@ -19,7 +19,7 @@ export async function signup(formData: FormData) {
     return { error: 'Please fill out all mandatory fields.' }
   }
 
-  const supabase = createClient()
+  const supabase = await createClient()
 
   // Sign up with Supabase Auth
   // We pass the extra data in 'raw_user_meta_data' so our Postgres trigger can capture it
