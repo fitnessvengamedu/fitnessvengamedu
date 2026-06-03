@@ -131,3 +131,18 @@
   0%, 100% { transform: translateY(0) rotate(0deg); }
   50% { transform: translateY(-15px) rotate(1deg); }
 }
+
+@keyframes brandGlow {
+  0% { 
+    text-shadow: 0 0 5px rgba(223, 255, 17, 0.2), 0 0 10px rgba(223, 255, 17, 0.2); 
+    opacity: 0.85;
+  }
+  100% { 
+    text-shadow: 0 0 20px rgba(223, 255, 17, 0.8), 0 0 30px rgba(223, 255, 17, 0.6); 
+    opacity: 1;
+  }
+}
+
+.animate-brand-pulse {
+  animation: brandGlow 2s ease-in-out infinite alternate;
+}

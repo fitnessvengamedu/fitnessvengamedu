@@ -18,7 +18,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "STITCH APEX ELITE | Engineered for Performance",
+  title: `${process.env.NEXT_PUBLIC_APP_NAME || "Fitness Gym"} | Engineered for Performance`,
   description: "Experience a new dimension of human performance. We merge elite kinetic coaching with biometric data streams.",
 };
 
@@ -35,7 +35,7 @@ export default function RootLayout({
           <nav className="fixed top-0 w-full bg-background/80 backdrop-blur-xl border-b border-glass-stroke shadow-[0_0_20px_rgba(223,255,17,0.03)] z-50">
             <div className="flex justify-between items-center px-4 md:px-12 h-20 w-full max-w-7xl mx-auto">
               <Link href="/" className="font-extrabold text-lg md:text-2xl tracking-tighter text-white font-sora">
-                STITCH <span className="text-electric-lime text-glow">APEX ELITE</span>
+                <span className="text-electric-lime text-glow uppercase animate-brand-pulse inline-block">{process.env.NEXT_PUBLIC_APP_NAME || "Fitness Gym"}</span>
               </Link>
               
               <div className="hidden md:flex items-center gap-8 font-mono text-xs uppercase tracking-widest">
@@ -66,10 +66,10 @@ export default function RootLayout({
             <div className="flex flex-col md:flex-row justify-between items-center px-4 md:px-12 gap-8 w-full max-w-7xl mx-auto">
               <div className="flex flex-col items-center md:items-start gap-3">
                 <div className="text-2xl font-bold tracking-tighter text-white font-sora">
-                  STITCH <span className="text-electric-lime">APEX ELITE</span>
+                  <span className="text-electric-lime uppercase animate-brand-pulse inline-block">{process.env.NEXT_PUBLIC_APP_NAME || "Fitness Gym"}</span>
                 </div>
                 <p className="text-white/40 font-mono text-[10px] uppercase tracking-widest">
-                  © {new Date().getFullYear()} STITCH APEX ELITE. ENGINEERED FOR PERFORMANCE.
+                  © {new Date().getFullYear()} {process.env.NEXT_PUBLIC_APP_NAME || "Fitness Gym"}. ENGINEERED FOR PERFORMANCE.
                 </p>
               </div>
               <div className="flex flex-wrap justify-center gap-6 font-mono text-[10px] uppercase tracking-widest">

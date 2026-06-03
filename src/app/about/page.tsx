@@ -25,7 +25,7 @@ export default function About() {
           </h1>
           <div className="space-y-6 text-white/60 leading-relaxed text-base">
             <p>
-              STITCH APEX ELITE was established with one core mission: to forge resilience, strength, and raw capability in every individual. We are not just a fitness center; we are a testing ground for limits.
+              {process.env.NEXT_PUBLIC_APP_NAME || "Fitness Gym"} was established with one core mission: to forge resilience, strength, and raw capability in every individual. We are not just a fitness center; we are a testing ground for limits.
             </p>
             <p>
               We provide state-of-the-art WebGL equipment telemetry, elite expert mentorship, and an immersive dark-first aesthetic specifically crafted to stimulate focus and push performance metrics to new heights.
