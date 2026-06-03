@@ -23,17 +23,22 @@ export const metadata: Metadata = {
   description: "Experience a new dimension of human performance. We merge elite kinetic coaching with biometric data streams.",
 };
 
-export default function RootLayout({
+import { createClient } from '@/utils/supabase/server';
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
   return (
     <html lang="en" className="dark">
       <body className={`${sora.variable} ${jetbrainsMono.variable} font-sans min-h-screen flex flex-col bg-deep-obsidian text-foreground antialiased`}>
         <SmoothScroll>
           {/* TopNavBar */}
-          <TopNavBar appName={process.env.NEXT_PUBLIC_APP_NAME || "Fitness Gym"} />
+          <TopNavBar appName={process.env.NEXT_PUBLIC_APP_NAME || "Fitness Gym"} user={user} />
 
           {/* Main Content */}
           <main className="flex-1 pt-20">

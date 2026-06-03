@@ -3,8 +3,10 @@
 import { useState } from 'react'
 import { signup } from './actions'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 export default function SignUpPage() {
+  const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
@@ -19,8 +21,10 @@ export default function SignUpPage() {
     if (result?.error) {
       setError(result.error)
       setLoading(false)
+    } else if (result?.success) {
+      router.push('/dashboard')
+      router.refresh()
     }
-    // If successful, the action will automatically redirect to /dashboard
   }
 
   return (
@@ -62,6 +66,36 @@ export default function SignUpPage() {
                 className="w-full bg-deep-obsidian/50 border border-glass-stroke rounded-lg px-4 py-3 text-white placeholder-white/20 focus:outline-none focus:border-electric-lime/50 transition-colors"
                 placeholder="+91..."
               />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="space-y-1">
+              <label className="text-xs text-white/70 font-mono uppercase tracking-wider ml-1">Age *</label>
+              <input 
+                name="age"
+                type="number" 
+                required
+                min={16}
+                max={100}
+                className="w-full bg-deep-obsidian/50 border border-glass-stroke rounded-lg px-4 py-3 text-white placeholder-white/20 focus:outline-none focus:border-electric-lime/50 transition-colors"
+                placeholder="25"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs text-white/70 font-mono uppercase tracking-wider ml-1">Gender *</label>
+              <select 
+                name="gender" 
+                required
+                defaultValue=""
+                className="w-full bg-deep-obsidian/50 border border-glass-stroke rounded-lg px-4 py-3 text-white focus:outline-none focus:border-electric-lime/50 transition-colors appearance-none"
+              >
+                <option value="" disabled className="bg-deep-obsidian text-white/50">Select Gender</option>
+                <option value="Male" className="bg-deep-obsidian text-white">Male</option>
+                <option value="Female" className="bg-deep-obsidian text-white">Female</option>
+                <option value="Other" className="bg-deep-obsidian text-white">Other</option>
+              </select>
             </div>
           </div>
 

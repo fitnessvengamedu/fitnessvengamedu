@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-export default function TopNavBar({ appName }: { appName: string }) {
+export default function TopNavBar({ appName, user }: { appName: string, user?: any }) {
   const pathname = usePathname()
 
   const navLinks = [
@@ -43,12 +43,20 @@ export default function TopNavBar({ appName }: { appName: string }) {
         </div>
 
         <div className="flex items-center gap-4">
-          <Link href="/signin" className="hidden lg:block text-white/60 hover:text-electric-lime transition-colors font-mono text-xs uppercase tracking-widest">
-            Member Login
-          </Link>
-          <Link href="/signup" className="primary-btn">
-            Join As A Member
-          </Link>
+          {user ? (
+            <Link href="/dashboard" className="primary-btn">
+              Dashboard Access
+            </Link>
+          ) : (
+            <>
+              <Link href="/signin" className="hidden lg:block text-white/60 hover:text-electric-lime transition-colors font-mono text-xs uppercase tracking-widest">
+                Member Login
+              </Link>
+              <Link href="/signup" className="primary-btn">
+                Join As A Member
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </nav>

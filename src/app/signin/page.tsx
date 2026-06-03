@@ -3,8 +3,10 @@
 import { useState } from 'react'
 import { signin } from './actions'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 export default function SignInPage() {
+  const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
@@ -19,6 +21,9 @@ export default function SignInPage() {
     if (result?.error) {
       setError(result.error)
       setLoading(false)
+    } else if (result?.success) {
+      router.push('/dashboard')
+      router.refresh()
     }
   }
 

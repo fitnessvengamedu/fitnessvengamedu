@@ -13,6 +13,11 @@ export async function signup(formData: FormData) {
   const street = formData.get('street') as string
   const area = formData.get('area') as string
   const district = formData.get('district') as string
+  const age = formData.get('age') as string
+  const gender = formData.get('gender') as string
+
+  // Generate a random 4-digit unique member ID
+  const memberId = Math.floor(1000 + Math.random() * 9000).toString()
 
   // Simple validation
   if (!email || !password || !fullName || !phone || !bloodGroup) {
@@ -34,6 +39,9 @@ export async function signup(formData: FormData) {
         street: street,
         area: area,
         district: district,
+        age: age,
+        gender: gender,
+        member_id: memberId,
         avatar_url: '' // Can be updated later
       },
     },
@@ -43,9 +51,5 @@ export async function signup(formData: FormData) {
     return { error: error.message }
   }
 
-  revalidatePath('/', 'layout')
-  
-  // Redirect to dashboard immediately after successful signup
-  // Note: This assumes email confirmation is turned OFF in Supabase settings
-  redirect('/dashboard')
+  return { success: true }
 }
