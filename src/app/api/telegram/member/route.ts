@@ -1,7 +1,7 @@
 import { Bot, webhookCallback } from "grammy";
 
-// Create a new bot instance using the token from .env
-const bot = new Bot(process.env.TELEGRAM_MEMBER_BOT_TOKEN || "");
+// Create a new bot instance using the token from .env (with fallback for build time)
+const bot = new Bot(process.env.TELEGRAM_MEMBER_BOT_TOKEN || "0000000000:dummy_member_token");
 
 // Basic setup
 bot.command("start", (ctx) => {
