@@ -34,8 +34,8 @@ export default async function RootLayout({
   const { data: { user } } = await supabase.auth.getUser();
 
   return (
-    <html lang="en" className="dark">
-      <body className={`${sora.variable} ${jetbrainsMono.variable} font-sans min-h-screen flex flex-col bg-deep-obsidian text-foreground antialiased`}>
+    <html lang="en" className="dark" suppressHydrationWarning>
+      <body className={`${sora.variable} ${jetbrainsMono.variable} font-sans min-h-screen flex flex-col bg-deep-obsidian text-foreground antialiased`} suppressHydrationWarning>
         <SmoothScroll>
           {/* TopNavBar */}
           <TopNavBar appName={process.env.NEXT_PUBLIC_APP_NAME || "Fitness Gym"} user={user} />
