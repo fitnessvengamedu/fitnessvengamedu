@@ -73,7 +73,7 @@ export default function DietProtocol({ initialGoal = '', targetCalories = '' }: 
   }
 
   return (
-    <div className="bg-glass-panel border border-glass-stroke p-8 rounded-2xl relative overflow-hidden group flex flex-col justify-between h-full min-h-[460px]">
+    <div className="bg-glass-panel border border-glass-stroke p-8 rounded-2xl relative overflow-hidden group flex flex-col justify-between h-full">
       <div className="absolute top-0 right-0 w-32 h-32 bg-electric-lime/5 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
       
       <div>
@@ -83,22 +83,22 @@ export default function DietProtocol({ initialGoal = '', targetCalories = '' }: 
         </h3>
 
         {/* Targets HUD */}
-        <div className="grid grid-cols-4 gap-2 mb-6 bg-deep-obsidian/40 border border-glass-stroke p-3.5 rounded-lg text-center font-mono">
-          <div className="space-y-0.5">
-            <div className="text-[8px] text-white/40 uppercase tracking-wider">CALORIES</div>
-            <div className="text-sm font-bold text-electric-lime">{calories} kcal</div>
+        <div className="grid grid-cols-4 gap-3 mb-6 bg-deep-obsidian/40 border border-glass-stroke p-4 rounded-lg text-center font-mono">
+          <div className="space-y-1">
+            <div className="text-[10px] text-white/40 uppercase tracking-wider">CALORIES</div>
+            <div className="text-sm font-bold text-electric-lime whitespace-nowrap">{calories} kcal</div>
           </div>
-          <div className="space-y-0.5 border-l border-glass-stroke">
-            <div className="text-[8px] text-white/40 uppercase tracking-wider">PROTEIN</div>
-            <div className="text-sm font-bold text-white">{targetProtein}g</div>
+          <div className="space-y-1 border-l border-glass-stroke pl-3">
+            <div className="text-[10px] text-white/40 uppercase tracking-wider">PROTEIN</div>
+            <div className="text-sm font-bold text-white whitespace-nowrap">{targetProtein}g</div>
           </div>
-          <div className="space-y-0.5 border-l border-glass-stroke">
-            <div className="text-[8px] text-white/40 uppercase tracking-wider">CARBS</div>
-            <div className="text-sm font-bold text-white">{targetCarbs}g</div>
+          <div className="space-y-1 border-l border-glass-stroke pl-3">
+            <div className="text-[10px] text-white/40 uppercase tracking-wider">CARBS</div>
+            <div className="text-sm font-bold text-white whitespace-nowrap">{targetCarbs}g</div>
           </div>
-          <div className="space-y-0.5 border-l border-glass-stroke">
-            <div className="text-[8px] text-white/40 uppercase tracking-wider">FAT</div>
-            <div className="text-sm font-bold text-white">{targetFat}g</div>
+          <div className="space-y-1 border-l border-glass-stroke pl-3">
+            <div className="text-[10px] text-white/40 uppercase tracking-wider">FAT</div>
+            <div className="text-sm font-bold text-white whitespace-nowrap">{targetFat}g</div>
           </div>
         </div>
 

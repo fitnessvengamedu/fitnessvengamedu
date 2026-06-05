@@ -87,7 +87,7 @@ export default async function DashboardPage({
 
   return (
     <div className="min-h-screen bg-deep-obsidian pt-12 px-4 md:px-12 pb-24">
-      <div className="max-w-5xl mx-auto space-y-8">
+      <div className="max-w-7xl mx-auto space-y-10">
         
         {/* Header section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-glass-stroke pb-6">
@@ -169,7 +169,7 @@ export default async function DashboardPage({
         </div>
 
         {/* Action Widgets */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <DietProtocol 
             initialGoal={fitnessGoal}
             targetCalories={targetCalories}
@@ -186,7 +186,7 @@ export default async function DashboardPage({
             dailyLogs={dailyLogs}
           />
 
-          <div className="bg-glass-panel border border-glass-stroke p-8 rounded-2xl relative overflow-hidden group flex flex-col justify-between h-full min-h-[460px]">
+          <div className="bg-glass-panel border border-glass-stroke p-8 rounded-2xl relative overflow-hidden group flex flex-col justify-between h-full">
             <div className="absolute top-0 right-0 w-32 h-32 bg-electric-lime/5 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:scale-110 transition-transform duration-500" />
             <div>
               <h3 className="text-xl font-bold text-white font-sora mb-6 flex items-center gap-3">

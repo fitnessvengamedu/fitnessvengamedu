@@ -192,7 +192,7 @@ export default function GoalTracker({
 
   if (isEditing) {
     return (
-      <div className="bg-glass-panel border border-glass-stroke p-8 rounded-2xl flex flex-col h-full relative overflow-hidden group min-h-[460px]">
+      <div className="bg-glass-panel border border-glass-stroke p-8 rounded-2xl flex flex-col h-full relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-32 h-32 bg-electric-lime/5 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:scale-110 transition-transform duration-500" />
         
         <div className="flex justify-between items-center mb-6">
@@ -327,7 +327,7 @@ export default function GoalTracker({
   }
 
   return (
-    <div className="bg-glass-panel border border-glass-stroke p-8 rounded-2xl flex flex-col h-full relative overflow-hidden group min-h-[460px] justify-between">
+    <div className="bg-glass-panel border border-glass-stroke p-8 rounded-2xl flex flex-col h-full relative overflow-hidden group justify-between">
       <div className="absolute top-0 right-0 w-32 h-32 bg-electric-lime/5 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:scale-110 transition-transform duration-500" />
       
       <div className="flex justify-between items-center mb-6">
@@ -363,7 +363,7 @@ export default function GoalTracker({
         <div className="flex-1 flex flex-col justify-between">
           <div className="space-y-4">
             {/* Active Goal Grid */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-5">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-lg bg-electric-lime/10 flex items-center justify-center border border-electric-lime/20 flex-shrink-0">
                   <Target className="w-4 h-4 text-electric-lime" />

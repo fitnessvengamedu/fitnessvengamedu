@@ -16,12 +16,15 @@ Reorganize and unify the dashboard telemetry & protocol widgets (Diet & Macro Pr
 - Propose layout Options (1: 4-column row, 2: vertical stack) for dashboard widgets.
 - Implement chosen layout and build/deploy to production Vercel.
 - Verify production display on custom domain.
-
-**Pending Tasks:**
 - Create IDCardWrapper component with toggles for Subscription and ID Card.
 - Integrate IDCardWrapper into the main dashboard page.
 - Create a standalone /dashboard/card page with 3D flip card, barcode, and print/download utilities.
 - Build, test, and deploy to Vercel production.
+- Improve dashboard layout spacing by expanding container max-width to 7xl, switching widgets grid to 2-column, and resolving text messy overlap issues.
+
+
+**Pending Tasks:**
+- None
 
 ## Custom Skills & Rules
 

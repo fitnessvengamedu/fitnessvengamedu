@@ -62,7 +62,7 @@ export default function BmiCalculator() {
   const indicatorPercent = getBmiPercentage()
 
   return (
-    <div className="bg-glass-panel border border-glass-stroke p-8 rounded-2xl relative overflow-hidden group h-full flex flex-col justify-between min-h-[460px]">
+    <div className="bg-glass-panel border border-glass-stroke p-8 rounded-2xl relative overflow-hidden group h-full flex flex-col justify-between">
       <div className="absolute top-0 right-0 w-32 h-32 bg-electric-lime/5 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:scale-110 transition-transform duration-500" />
       
       <div>

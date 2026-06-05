@@ -33,7 +33,7 @@ export default function IDCardWrapper({
   const joinDate = new Date(joinDateString)
 
   return (
-    <div className="bg-glass-panel border border-glass-stroke p-6 rounded-2xl flex flex-col h-full min-h-[460px] justify-between relative overflow-hidden group">
+    <div className="bg-glass-panel border border-glass-stroke p-6 rounded-2xl flex flex-col h-full justify-between relative overflow-hidden group">
       {/* Absolute background glow */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-electric-lime/5 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:scale-110 transition-transform duration-500" />
       
