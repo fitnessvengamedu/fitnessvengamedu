@@ -74,7 +74,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   // Enforce admin-only access on /admin routes
-  if (request.nextUrl.pathname.startsWith('/admin')) {
+  if (request.nextUrl.pathname.startsWith('/admin') && user) {
     // Create a trusted admin client using the service role key to bypass RLS policies in middleware
     const serviceClient = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
