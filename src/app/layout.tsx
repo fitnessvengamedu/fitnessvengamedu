@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   description: "Experience a new dimension of human performance. We merge elite kinetic coaching with biometric data streams.",
 };
 
-import { createClient } from '@/utils/supabase/server';
+import { createClient, createAdminClient } from '@/utils/supabase/server';
 
 export default async function RootLayout({
   children,
@@ -35,7 +35,8 @@ export default async function RootLayout({
 
   let userWithRole = null;
   if (user) {
-    const { data: profile } = await supabase
+    const adminSupabase = await createAdminClient();
+    const { data: profile } = await adminSupabase
       .from('profiles')
       .select('role')
       .eq('id', user.id)

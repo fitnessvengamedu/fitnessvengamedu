@@ -13,7 +13,7 @@ export default function TopNavBar({ appName, user }: { appName: string, user?: a
     { name: 'Facility', href: '/about' },
     { name: 'Gallery', href: '/gallery' },
     { name: 'Feedback', href: '/feedback' },
-    { name: 'Review', href: '#review' }, // Can be changed when review page is created
+    { name: 'Review', href: '/review' },
   ]
 
   return (
@@ -46,21 +46,33 @@ export default function TopNavBar({ appName, user }: { appName: string, user?: a
 
         <div className="flex items-center gap-3 md:gap-4">
           {user && user.role === 'admin' && (
-            <Link 
-              href="/admin" 
-              className="border border-electric-lime/30 hover:border-electric-lime hover:bg-electric-lime/10 text-electric-lime font-mono text-[10px] sm:text-xs px-3 sm:px-5 py-2 sm:py-2.5 tracking-wider sm:tracking-widest rounded-lg transition-all"
-            >
-              Admin Panel
-            </Link>
+            <>
+              <Link 
+                href="/admin" 
+                className="border border-electric-lime/30 hover:border-electric-lime hover:bg-electric-lime/10 text-electric-lime font-mono text-[10px] sm:text-xs px-3 sm:px-5 py-2 sm:py-2.5 tracking-wider sm:tracking-widest rounded-lg transition-all"
+              >
+                Admin Panel
+              </Link>
+              <form action="/auth/signout" method="post" className="inline">
+                <button 
+                  type="submit"
+                  className="border border-apex-crimson/50 hover:bg-apex-crimson/10 text-apex-crimson font-mono text-[10px] sm:text-xs px-3 sm:px-5 py-2 sm:py-2.5 tracking-wider sm:tracking-widest rounded-lg transition-all cursor-pointer"
+                >
+                  Sign Out
+                </button>
+              </form>
+            </>
           )}
           {user ? (
-            <Link 
-              href="/dashboard" 
-              className="primary-btn text-[10px] sm:text-xs px-4 sm:px-6 py-2 sm:py-2.5 tracking-wider sm:tracking-widest"
-            >
-              <span className="inline sm:hidden">Dashboard</span>
-              <span className="hidden sm:inline">Dashboard Access</span>
-            </Link>
+            user.role !== 'admin' && (
+              <Link 
+                href="/dashboard" 
+                className="primary-btn text-[10px] sm:text-xs px-4 sm:px-6 py-2 sm:py-2.5 tracking-wider sm:tracking-widest"
+              >
+                <span className="inline sm:hidden">Dashboard</span>
+                <span className="hidden sm:inline">Dashboard Access</span>
+              </Link>
+            )
           ) : (
             <>
               <Link href="/signin" className="hidden lg:block text-white/60 hover:text-electric-lime transition-colors font-mono text-xs uppercase tracking-widest">
@@ -118,22 +130,35 @@ export default function TopNavBar({ appName, user }: { appName: string, user?: a
           
           <div className="pt-4 flex flex-col gap-3">
             {user && user.role === 'admin' && (
-              <Link 
-                href="/admin" 
-                onClick={() => setIsOpen(false)}
-                className="border border-electric-lime/30 hover:border-electric-lime hover:bg-electric-lime/10 text-electric-lime font-mono text-center py-3 text-xs tracking-widest rounded-lg transition-all"
-              >
-                Admin Panel
-              </Link>
+              <>
+                <Link 
+                  href="/admin" 
+                  onClick={() => setIsOpen(false)}
+                  className="border border-electric-lime/30 hover:border-electric-lime hover:bg-electric-lime/10 text-electric-lime font-mono text-center py-3 text-xs tracking-widest rounded-lg transition-all"
+                >
+                  Admin Panel
+                </Link>
+                <form action="/auth/signout" method="post" className="w-full">
+                  <button 
+                    type="submit" 
+                    onClick={() => setIsOpen(false)}
+                    className="w-full border border-apex-crimson/50 hover:bg-apex-crimson/10 text-apex-crimson font-mono text-center py-3 text-xs tracking-widest rounded-lg transition-all cursor-pointer"
+                  >
+                    Sign Out
+                  </button>
+                </form>
+              </>
             )}
             {user ? (
-              <Link 
-                href="/dashboard" 
-                onClick={() => setIsOpen(false)}
-                className="primary-btn text-center py-3 text-xs tracking-widest"
-              >
-                Dashboard Access
-              </Link>
+              user.role !== 'admin' && (
+                <Link 
+                  href="/dashboard" 
+                  onClick={() => setIsOpen(false)}
+                  className="primary-btn text-center py-3 text-xs tracking-widest"
+                >
+                  Dashboard Access
+                </Link>
+              )
             ) : (
               <>
                 <Link 

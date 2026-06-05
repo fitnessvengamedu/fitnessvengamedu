@@ -22,7 +22,11 @@ export default function SignInPage() {
       setError(result.error)
       setLoading(false)
     } else if (result?.success) {
-      router.push('/dashboard')
+      if (result.role === 'admin') {
+        router.push('/admin')
+      } else {
+        router.push('/dashboard')
+      }
       router.refresh()
     }
   }

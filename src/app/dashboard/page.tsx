@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { createClient } from '@/utils/supabase/server'
+import { createClient, createAdminClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import { User, Droplet, MapPin, Phone, ShieldCheck } from 'lucide-react'
 import BmiCalculator from '@/components/BmiCalculator'
@@ -24,15 +24,22 @@ export default async function DashboardPage({
     redirect('/signin')
   }
 
+  // Create admin client to query tables bypassing recursive RLS
+  const adminSupabase = await createAdminClient()
+
   // Fetch full profile data from our custom profiles table (if it exists)
-  const { data: profile } = await supabase
+  const { data: profile } = await adminSupabase
     .from('profiles')
     .select('*')
     .eq('id', user.id)
     .single()
 
+  if (profile?.role === 'admin') {
+    redirect('/admin')
+  }
+
   // Fetch active subscription
-  const { data: subscription } = await supabase
+  const { data: subscription } = await adminSupabase
     .from('subscriptions')
     .select('*')
     .eq('user_id', user.id)

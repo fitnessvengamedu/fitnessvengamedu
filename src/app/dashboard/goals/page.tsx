@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { createClient } from '@/utils/supabase/server'
+import { createClient, createAdminClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import DailyLogForm from '@/components/DailyLogForm'
 import { BarChart3, Flame, Droplet, Dumbbell, Calendar } from 'lucide-react'
@@ -13,12 +13,17 @@ export default async function GoalsTrackingPage() {
     redirect('/signin')
   }
 
-  // Get user profile data
-  const { data: profile } = await supabase
+  // Get user profile data using admin client to bypass RLS recursion
+  const adminSupabase = await createAdminClient()
+  const { data: profile } = await adminSupabase
     .from('profiles')
     .select('*')
     .eq('id', user.id)
     .single()
+
+  if (profile?.role === 'admin') {
+    redirect('/admin')
+  }
 
   const metadata = user.user_metadata || {}
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { Star, CheckCircle2 } from "lucide-react";
 
 interface Review {
   author_name: string;
@@ -50,109 +51,121 @@ export default function ReviewsSection() {
 
   useEffect(() => {
     let active = true;
+    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY || "";
+    const placeId = process.env.GOOGLE_PLACE_ID || "ChIJHXn5AQkvqjsRGkxQLv3ynEg";
 
-    function loadGoogleMapsScript(callback: () => void) {
-      if (typeof window === "undefined") return;
-
-      if ((window as any).google && (window as any).google.maps && (window as any).google.maps.places) {
-        callback();
-        return;
-      }
-
-      // Check if there is already a script loading Google Maps
-      const existingScript = document.getElementById("google-maps-places-script");
-      if (existingScript) {
-        const handleLoad = () => callback();
-        existingScript.addEventListener("load", handleLoad);
-        return;
-      }
-
-      const apiKey = process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY || "AIzaSyBgneRJDSMQ-Ypv0Ia6zxz3MMfROgzR4RA";
-      const script = document.createElement("script");
-      script.id = "google-maps-places-script";
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
-      script.async = true;
-      script.defer = true;
-      script.onload = () => {
-        if (active) callback();
-      };
-      script.onerror = () => {
-        console.error("Failed to load Google Maps script");
+    async function fallbackToBackend() {
+      try {
+        const res = await fetch("/api/reviews");
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        const data = await res.json();
+        if (active) {
+          if (data && data.reviews && Array.isArray(data.reviews)) {
+            setReviews(data.reviews.slice(0, 4));
+          } else {
+            setReviews(getFallbackReviews());
+          }
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error("ReviewsSection fallback fetch failed:", err);
         if (active) {
           setReviews(getFallbackReviews());
           setLoading(false);
         }
-      };
-      document.head.appendChild(script);
+      }
     }
 
-    loadGoogleMapsScript(() => {
+    if (!apiKey) {
+      fallbackToBackend();
+      return;
+    }
+
+    const scriptId = "google-maps-places-script";
+    let script = document.getElementById(scriptId) as HTMLScriptElement;
+
+    const initializePlacesService = () => {
       try {
-        const dummy = document.createElement("div");
-        const service = new (window as any).google.maps.places.PlacesService(dummy);
-        const placeId = process.env.NEXT_PUBLIC_GOOGLE_PLACE_ID || "ChIJHXn5AQkvqjsRGkxQLv3ynEg";
+        const dummyDiv = document.createElement("div");
+        const service = new (window as any).google.maps.places.PlacesService(dummyDiv);
 
         service.getDetails(
           {
             placeId: placeId,
-            fields: ["reviews", "rating", "name"]
+            fields: ["reviews"]
           },
           (place: any, status: any) => {
             if (!active) return;
             if (status === (window as any).google.maps.places.PlacesServiceStatus.OK && place && place.reviews) {
-              const filtered = place.reviews
+              const googleReviews: Review[] = place.reviews
                 .filter((r: any) => r.rating >= 3)
                 .map((r: any) => ({
                   author_name: r.author_name,
                   rating: r.rating,
                   text: r.text,
-                  relative_time_description: r.relative_time_description || "Recently",
+                  relative_time_description: r.relative_time_description,
                   profile_photo_url: r.profile_photo_url
-                }));
-              setReviews(filtered.length > 0 ? filtered : getFallbackReviews());
+                }))
+                .slice(0, 4);
+
+              setReviews(googleReviews.length > 0 ? googleReviews : getFallbackReviews());
+              setLoading(false);
             } else {
-              console.warn("PlacesService failed or returned no reviews:", status);
-              setReviews(getFallbackReviews());
+              console.warn("Google Places Service homepage query failed status:", status);
+              fallbackToBackend();
             }
-            setLoading(false);
           }
         );
       } catch (err) {
-        console.error("Error invoking PlacesService:", err);
-        if (active) {
-          setReviews(getFallbackReviews());
-          setLoading(false);
-        }
+        console.error("Google Places Service instantiation error on homepage:", err);
+        fallbackToBackend();
       }
-    });
+    };
 
-    // Fallback timer: if script doesn't load/respond in 4.5 seconds, use fallback reviews
-    const fallbackTimer = setTimeout(() => {
-      if (loading && active) {
-        console.log("PlacesService loading timed out, using fallback reviews");
-        setReviews(getFallbackReviews());
-        setLoading(false);
+    if ((window as any).google && (window as any).google.maps && (window as any).google.maps.places) {
+      initializePlacesService();
+    } else {
+      if (!script) {
+        script = document.createElement("script");
+        script.id = scriptId;
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+        script.async = true;
+        script.defer = true;
+        document.head.appendChild(script);
       }
-    }, 4500);
+
+      const handleScriptLoad = () => {
+        if (active) initializePlacesService();
+      };
+
+      const handleScriptError = () => {
+        console.warn("Failed to load Google Maps Places script on homepage");
+        if (active) fallbackToBackend();
+      };
+
+      script.addEventListener("load", handleScriptLoad);
+      script.addEventListener("error", handleScriptError);
+
+      return () => {
+        active = false;
+        script.removeEventListener("load", handleScriptLoad);
+        script.removeEventListener("error", handleScriptError);
+      };
+    }
 
     return () => {
       active = false;
-      clearTimeout(fallbackTimer);
     };
   }, []);
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }).map((_, index) => (
-      <svg
+      <Star
         key={index}
         className={`w-4 h-4 ${
-          index < rating ? "text-electric-lime text-glow" : "text-white/20"
+          index < rating ? "text-electric-lime fill-electric-lime" : "text-white/10"
         }`}
-        fill="currentColor"
-        viewBox="0 0 20 20"
-      >
-        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-      </svg>
+      />
     ));
   };
 
@@ -218,13 +231,27 @@ export default function ReviewsSection() {
                 <div className="space-y-4">
                   {/* Header info */}
                   <div className="flex justify-between items-start">
-                    <div>
-                      <h4 className="font-bold text-white font-sora text-sm tracking-tight group-hover:text-electric-lime transition-colors">
-                        {review.author_name}
-                      </h4>
-                      <p className="text-[10px] text-white/40 font-mono mt-0.5">
-                        {review.relative_time_description}
-                      </p>
+                    <div className="flex items-center gap-3">
+                      {review.profile_photo_url ? (
+                        <img
+                          src={review.profile_photo_url}
+                          alt={review.author_name}
+                          className="w-8 h-8 rounded-full border border-glass-stroke object-cover"
+                          referrerPolicy="no-referrer"
+                        />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full border border-glass-stroke bg-electric-lime/10 flex items-center justify-center font-bold text-electric-lime text-[10px] font-mono uppercase">
+                          {review.author_name.slice(0, 2)}
+                        </div>
+                      )}
+                      <div>
+                        <h4 className="font-bold text-white font-sora text-sm tracking-tight group-hover:text-electric-lime transition-colors">
+                          {review.author_name}
+                        </h4>
+                        <p className="text-[10px] text-white/40 font-mono mt-0.5">
+                          {review.relative_time_description}
+                        </p>
+                      </div>
                     </div>
                     {/* Google Badge Icon */}
                     <div className="w-5 h-5 flex items-center justify-center rounded-full bg-white/5 border border-glass-stroke group-hover:bg-electric-lime/10 group-hover:border-electric-lime/20 transition-all">
@@ -245,7 +272,8 @@ export default function ReviewsSection() {
 
                 {/* Verification line */}
                 <div className="border-t border-glass-stroke/50 pt-3 mt-4 flex items-center justify-between">
-                  <span className="font-mono text-[9px] text-white/30 uppercase tracking-wider">
+                  <span className="font-mono text-[9px] text-white/30 uppercase tracking-wider flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3 text-electric-lime" />
                     VERIFIED REVIEW
                   </span>
                   <div className="flex items-center gap-1">

@@ -10,13 +10,11 @@ import {
   AlertCircle, 
   Image as ImageIcon, 
   Video, 
-  Database,
   User,
   Phone,
   Info,
   ExternalLink,
-  ClipboardCheck,
-  ClipboardCopy
+  Database
 } from 'lucide-react';
 
 interface Profile {
@@ -54,9 +52,10 @@ export default function AdminPanelClient({ initialProfiles, initialSubscriptions
   const [searchQuery, setSearchQuery] = useState('');
   
   // File upload state
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [eventName, setEventName] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const [currentUploadingIndex, setCurrentUploadingIndex] = useState<number | null>(null);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [successLink, setSuccessLink] = useState('');
@@ -105,17 +104,22 @@ WITH CHECK (
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setFile(e.target.files[0]);
+      const newFiles = Array.from(e.target.files);
+      setFiles(prev => [...prev, ...newFiles]);
       setUploadStatus('idle');
       setErrorMessage('');
       setDbStatusInfo('');
     }
   };
 
+  const removeFile = (index: number) => {
+    setFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleUpload = async () => {
-    if (!file || !eventName.trim()) {
+    if (files.length === 0 || !eventName.trim()) {
       setUploadStatus('error');
-      setErrorMessage('Please provide both an event name and a file to upload.');
+      setErrorMessage('Please provide both an event name and at least one file to upload.');
       return;
     }
 
@@ -123,42 +127,62 @@ WITH CHECK (
     setUploadStatus('idle');
     setErrorMessage('');
     setDbStatusInfo('');
+    setSuccessLink('');
 
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('event_name', eventName.trim());
+    let successCount = 0;
+    let dbSuccessCount = 0;
+    const failedFiles: string[] = [];
 
-    try {
-      const response = await fetch('/api/admin/upload', {
-        method: 'POST',
-        body: formData,
-      });
+    for (let i = 0; i < files.length; i++) {
+      setCurrentUploadingIndex(i);
+      const file = files[i];
 
-      const data = await response.json();
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('event_name', eventName.trim());
 
-      if (response.ok) {
-        setUploadStatus('success');
-        setSuccessLink(data.webViewLink || data.directUrl);
-        
-        if (data.savedToDb) {
-          setDbStatusInfo('Successfully saved to database & Google Drive!');
-        } else if (data.dbError) {
-          setDbStatusInfo(`Saved to Google Drive, but database failed: ${data.dbError}. Running SQL migration might be required.`);
+      try {
+        const response = await fetch('/api/admin/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          successCount++;
+          if (data.savedToDb) {
+            dbSuccessCount++;
+          }
+          if (i === files.length - 1) {
+            setSuccessLink(data.webViewLink || data.directUrl);
+          }
         } else {
-          setDbStatusInfo('Saved to Google Drive successfully.');
+          failedFiles.push(`${file.name}: ${data.error || 'Failed to upload'}`);
         }
-
-        setFile(null);
-        setEventName('');
-      } else {
-        setUploadStatus('error');
-        setErrorMessage(data.error || 'Failed to upload file');
+      } catch (err) {
+        failedFiles.push(`${file.name}: Network error`);
       }
-    } catch (err: any) {
+    }
+
+    setCurrentUploadingIndex(null);
+    setIsUploading(false);
+
+    if (successCount === files.length) {
+      setUploadStatus('success');
+      if (dbSuccessCount === files.length) {
+        setDbStatusInfo(`Successfully uploaded all ${files.length} files to Google Drive & saved to database!`);
+      } else {
+        setDbStatusInfo(`Uploaded all ${files.length} files to Google Drive. Saved ${dbSuccessCount} of ${files.length} to database.`);
+      }
+      setFiles([]);
+      setEventName('');
+    } else if (successCount > 0) {
       setUploadStatus('error');
-      setErrorMessage('Network error occurred while uploading');
-    } finally {
-      setIsUploading(false);
+      setErrorMessage(`Uploaded ${successCount} of ${files.length} files. Failed uploads:\n${failedFiles.join('\n')}`);
+    } else {
+      setUploadStatus('error');
+      setErrorMessage(`Failed to upload files:\n${failedFiles.join('\n')}`);
     }
   };
 
@@ -403,6 +427,7 @@ WITH CHECK (
               <div className="border-2 border-dashed border-glass-stroke hover:border-electric-lime/30 rounded-lg p-10 flex flex-col items-center justify-center bg-white/[0.01] hover:bg-white/[0.02] transition-colors relative cursor-pointer">
                 <input 
                   type="file" 
+                  multiple
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                   onChange={handleFileChange}
                   accept="image/*,video/*"
@@ -411,32 +436,50 @@ WITH CHECK (
                 
                 <UploadCloud className="w-12 h-12 text-white/20 mb-4" />
                 <p className="text-sm font-bold text-white mb-1">
-                  {file ? file.name : 'Click or drag file to select'}
+                  {files.length > 0 ? `${files.length} file(s) selected` : 'Click or drag files to select'}
                 </p>
                 <p className="text-xs text-white/40 font-mono">
-                  {file ? `${(file.size / (1024 * 1024)).toFixed(2)} MB` : 'Supports Images (.jpg, .png) and Videos (.mp4)'}
+                  Supports multiple Images (.jpg, .png) and Videos (.mp4)
                 </p>
-                
-                {file && (
-                  <div className="mt-4 flex items-center space-x-2 text-electric-lime bg-electric-lime/5 border border-electric-lime/10 px-3 py-1 rounded-full text-xs font-mono">
-                    {file.type.startsWith('image/') ? <ImageIcon className="w-3.5 h-3.5" /> : <Video className="w-3.5 h-3.5" />}
-                    <span>{file.type.startsWith('image/') ? 'Image File' : 'Video File'}</span>
-                  </div>
-                )}
               </div>
+
+              {/* Selected Files List */}
+              {files.length > 0 && (
+                <div className="mt-4 space-y-2 max-h-48 overflow-y-auto border border-glass-stroke rounded-lg p-3 bg-deep-obsidian/30">
+                  <p className="text-[10px] font-mono text-white/40 uppercase tracking-widest mb-1.5">Selected Files ({files.length})</p>
+                  {files.map((f, idx) => (
+                    <div key={idx} className="flex justify-between items-center p-2 rounded-lg bg-deep-obsidian/50 border border-glass-stroke text-xs">
+                      <div className="flex items-center space-x-2 truncate">
+                        {f.type.startsWith('image/') ? <ImageIcon className="w-3.5 h-3.5 text-electric-lime" /> : <Video className="w-3.5 h-3.5 text-sky-400" />}
+                        <span className="truncate max-w-[200px] font-mono text-white/80">{f.name}</span>
+                        <span className="text-[9px] text-white/40 font-mono">({(f.size / (1024 * 1024)).toFixed(2)} MB)</span>
+                      </div>
+                      <button
+                        onClick={() => removeFile(idx)}
+                        disabled={isUploading}
+                        className="text-[10px] text-white/40 hover:text-red-400 font-mono px-2 py-0.5 rounded hover:bg-white/5 transition-all cursor-pointer"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {/* Submit Trigger */}
               <div className="flex justify-end pt-2">
                 <button
                   onClick={handleUpload}
-                  disabled={!file || !eventName.trim() || isUploading}
+                  disabled={files.length === 0 || !eventName.trim() || isUploading}
                   className={`px-8 py-3 rounded-lg text-xs font-mono uppercase tracking-widest transition-all ${
-                    !file || !eventName.trim() || isUploading
+                    files.length === 0 || !eventName.trim() || isUploading
                       ? 'bg-white/5 text-white/30 cursor-not-allowed border border-white/5'
                       : 'bg-electric-lime hover:bg-electric-lime/90 text-deep-obsidian font-bold shadow-[0_0_20px_rgba(223,255,17,0.25)] active:scale-95 cursor-pointer'
                   }`}
                 >
-                  {isUploading ? 'Streaming to Drive...' : 'Process Upload & Sync'}
+                  {isUploading 
+                    ? `Streaming (${currentUploadingIndex !== null ? currentUploadingIndex + 1 : 0}/${files.length})...` 
+                    : 'Process Upload & Sync'}
                 </button>
               </div>
 
@@ -475,47 +518,6 @@ WITH CHECK (
             </div>
           </div>
         )}
-      </div>
-
-      {/* SQL Migration Collapsible Helper Block */}
-      <div className="max-w-5xl mx-auto mt-12 pt-8 border-t border-glass-stroke/40">
-        <div className="glass-card p-5 border border-glass-stroke bg-white/[0.01]">
-          <div 
-            onClick={() => setShowSqlGuide(!showSqlGuide)}
-            className="flex items-center justify-between cursor-pointer"
-          >
-            <div className="flex items-center gap-3">
-              <Database className="w-4 h-4 text-electric-lime" />
-              <div>
-                <h4 className="text-xs font-bold font-mono uppercase text-white">DB Schema Status & Setup</h4>
-                <p className="text-[10px] text-white/40 font-mono">Run manual DDL migration if gallery table is missing</p>
-              </div>
-            </div>
-            <button className="text-[10px] font-mono text-electric-lime/80 hover:text-electric-lime uppercase">
-              {showSqlGuide ? 'Hide Instructions' : 'View Instructions'}
-            </button>
-          </div>
-
-          {showSqlGuide && (
-            <div className="mt-4 pt-4 border-t border-glass-stroke/50 space-y-4">
-              <p className="text-xs text-white/70 leading-relaxed font-sans">
-                If you haven't created the <code className="bg-white/5 px-1.5 py-0.5 rounded text-electric-lime text-[11px] font-mono">gallery_items</code> table, the upload will still save to Google Drive but the database lookup will fail. Paste the SQL script below into your <strong>Supabase SQL Editor</strong> to enable database tracking:
-              </p>
-              <div className="relative">
-                <pre className="bg-deep-obsidian p-4 rounded-lg text-[10px] font-mono text-white/70 overflow-x-auto max-h-48 border border-glass-stroke">
-                  {sqlMigrationCode}
-                </pre>
-                <button
-                  onClick={handleCopySql}
-                  className="absolute top-3 right-3 bg-white/5 hover:bg-white/10 text-white border border-glass-stroke p-1.5 rounded transition-all active:scale-95"
-                  title="Copy SQL Code"
-                >
-                  {copied ? <ClipboardCheck className="w-3.5 h-3.5 text-emerald-400" /> : <ClipboardCopy className="w-3.5 h-3.5 text-white/60" />}
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );

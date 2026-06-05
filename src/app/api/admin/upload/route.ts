@@ -71,6 +71,23 @@ export async function POST(req: Request) {
     });
 
     const fileId = response.data.id;
+
+    // Make the file publicly viewable so the preview renders on the website
+    if (fileId) {
+      try {
+        await drive.permissions.create({
+          fileId: fileId,
+          requestBody: {
+            role: 'reader',
+            type: 'anyone',
+          },
+        });
+        console.log(`[Upload] Set public read permissions for file ${fileId}`);
+      } catch (permError: any) {
+        console.warn(`[Upload] Failed to set public permissions for file ${fileId}:`, permError.message);
+      }
+    }
+
     // Construct the direct image source link format
     const directFileUrl = fileType === 'image' 
       ? `https://lh3.googleusercontent.com/d/${fileId}`

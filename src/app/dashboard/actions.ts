@@ -1,6 +1,6 @@
 'use server'
 
-import { createClient } from '@/utils/supabase/server'
+import { createClient, createAdminClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 
 export async function updateGoals(goal: string, targetWeight: string, targetCalories: string) {
@@ -25,7 +25,8 @@ export async function updateGoals(goal: string, targetWeight: string, targetCalo
 
   // Gracefully try to update profiles table if columns exist
   try {
-    await supabase
+    const adminSupabase = await createAdminClient()
+    await adminSupabase
       .from('profiles')
       .update({
         fitness_goal: goal,
@@ -70,7 +71,8 @@ export async function addDailyLog(log: { date: string; calories: number; water: 
 
   // Gracefully try to update profiles table if columns exist
   try {
-    await supabase
+    const adminSupabase = await createAdminClient()
+    await adminSupabase
       .from('profiles')
       .update({
         daily_logs: newLogs
@@ -117,7 +119,8 @@ export async function updateGoalsList(goals: Array<{ id: string; objective: stri
   }
 
   try {
-    await supabase
+    const adminSupabase = await createAdminClient()
+    await adminSupabase
       .from('profiles')
       .update({
         goals_list: goals,

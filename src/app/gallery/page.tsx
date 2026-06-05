@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RefreshCw, Play, Image as ImageIcon, Video, Calendar, Eye } from 'lucide-react';
+import { createClient } from '@/utils/supabase/client';
 
 interface GalleryItem {
   id: string;
@@ -18,16 +19,24 @@ export default function GalleryPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSyncing, setIsSyncing] = useState(false);
   const [activeMedia, setActiveMedia] = useState<GalleryItem | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const fetchGallery = async (showSyncSpinner = false) => {
     if (showSyncSpinner) setIsSyncing(true);
-    else setIsLoading(true);
+    else if (items.length === 0) setIsLoading(true);
     
     try {
-      const res = await fetch('/api/gallery');
+      const url = showSyncSpinner ? '/api/gallery?sync=true' : '/api/gallery';
+      const res = await fetch(url);
       const data = await res.json();
       if (data && data.items) {
         setItems(data.items);
+        // Save to client cache
+        try {
+          localStorage.setItem('s_fitness_gallery_cache', JSON.stringify(data.items));
+        } catch (e) {
+          console.warn('Failed to save gallery cache:', e);
+        }
       }
     } catch (err) {
       console.error('Error fetching gallery items:', err);
@@ -38,7 +47,43 @@ export default function GalleryPage() {
   };
 
   useEffect(() => {
+    // 1. Load from cache first for instant page load
+    try {
+      const cached = localStorage.getItem('s_fitness_gallery_cache');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setItems(parsed);
+          setIsLoading(false);
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to load gallery cache:', e);
+    }
+
+    // 2. Fetch fresh data in background
     fetchGallery();
+
+    const checkAdminStatus = async () => {
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+          if (profile && profile.role === 'admin') {
+            setIsAdmin(true);
+          }
+        }
+      } catch (err) {
+        console.error('Error checking admin status:', err);
+      }
+    };
+
+    checkAdminStatus();
   }, []);
 
   // Extract unique events for filters
@@ -75,30 +120,32 @@ export default function GalleryPage() {
       </div>
 
       {/* Sync Status dashboard */}
-      <div className="max-w-5xl mx-auto glass-card p-5 sm:p-6 mb-10 border-l-4 border-l-electric-lime shadow-[0_0_20px_rgba(223,255,17,0.02)]">
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div className="flex items-center gap-4">
-            <div className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-electric-lime opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-electric-lime"></span>
+      {isAdmin && (
+        <div className="max-w-5xl mx-auto glass-card p-5 sm:p-6 mb-10 border-l-4 border-l-electric-lime shadow-[0_0_20px_rgba(223,255,17,0.02)]">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-4">
+              <div className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-electric-lime opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-electric-lime"></span>
+              </div>
+              <div>
+                <p className="font-mono text-[10px] uppercase tracking-widest text-white/40">Status: Active</p>
+                <h3 className="text-sm sm:text-base font-bold font-sora text-white">Google Drive Stream Online</h3>
+              </div>
             </div>
-            <div>
-              <p className="font-mono text-[10px] uppercase tracking-widest text-white/40">Status: Active</p>
-              <h3 className="text-sm sm:text-base font-bold font-sora text-white">Google Drive Stream Online</h3>
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={() => fetchGallery(true)}
+                disabled={isSyncing}
+                className="flex items-center gap-2 border border-glass-stroke hover:border-electric-lime/30 text-white/80 hover:text-white px-5 py-2 rounded-lg text-xs font-mono uppercase tracking-widest transition-all"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin text-electric-lime' : ''}`} /> 
+                {isSyncing ? 'Syncing...' : 'Re-sync Stream'}
+              </button>
             </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={() => fetchGallery(true)}
-              disabled={isSyncing}
-              className="flex items-center gap-2 border border-glass-stroke hover:border-electric-lime/30 text-white/80 hover:text-white px-5 py-2 rounded-lg text-xs font-mono uppercase tracking-widest transition-all"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin text-electric-lime' : ''}`} /> 
-              {isSyncing ? 'Syncing...' : 'Re-sync Stream'}
-            </button>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Dynamic Event Filter Pills */}
       {eventFilters.length > 1 && (
@@ -148,6 +195,11 @@ export default function GalleryPage() {
                   year: 'numeric'
                 });
 
+                // Optimization: use Google Drive image resizing parameter =w500 for grid thumbnails
+                const optimizedThumbnail = item.file_type === 'image' 
+                  ? `${item.file_url}=w500` 
+                  : '/images/gym_2.jpg';
+
                 return (
                   <motion.div 
                     layout
@@ -163,18 +215,21 @@ export default function GalleryPage() {
                     {item.file_type === 'image' ? (
                       <>
                         <img 
-                          src={item.file_url} 
+                          src={optimizedThumbnail} 
                           alt={item.event_name} 
+                          referrerPolicy="no-referrer"
+                          loading="lazy"
                           className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-700 z-0" 
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-deep-obsidian via-deep-obsidian/40 to-transparent z-10" />
                       </>
                     ) : (
                       <>
-                        {/* Video Mock/Placeholder Image (using Gym_2) */}
+                        {/* Video Thumbnail (using local Gym_2) */}
                         <img 
-                          src="/images/gym_2.jpg" 
+                          src={optimizedThumbnail} 
                           alt="Video thumbnail" 
+                          loading="lazy"
                           className="absolute inset-0 w-full h-full object-cover opacity-25 group-hover:scale-105 transition-transform duration-700 z-0" 
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-deep-obsidian via-deep-obsidian/40 to-transparent z-10" />
@@ -235,8 +290,9 @@ export default function GalleryPage() {
           >
             {activeMedia.file_type === 'image' ? (
               <img 
-                src={activeMedia.file_url} 
+                src={`${activeMedia.file_url}=w1200`} 
                 alt={activeMedia.event_name} 
+                referrerPolicy="no-referrer"
                 className="w-full max-h-[70vh] object-contain mx-auto"
               />
             ) : (

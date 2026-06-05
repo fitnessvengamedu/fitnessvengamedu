@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { createClient } from '@/utils/supabase/server'
+import { createClient, createAdminClient } from '@/utils/supabase/server'
 
 export async function signin(formData: FormData) {
   const email = formData.get('email') as string
@@ -14,7 +14,7 @@ export async function signin(formData: FormData) {
 
   const supabase = await createClient()
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data: authData, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   })
@@ -23,5 +23,18 @@ export async function signin(formData: FormData) {
     return { error: error.message }
   }
 
-  return { success: true }
+  let role = 'member'
+  if (authData?.user) {
+    const adminSupabase = await createAdminClient()
+    const { data: profile } = await adminSupabase
+      .from('profiles')
+      .select('role')
+      .eq('id', authData.user.id)
+      .single()
+    if (profile?.role) {
+      role = profile.role
+    }
+  }
+
+  return { success: true, role }
 }

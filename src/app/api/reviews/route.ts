@@ -8,6 +8,9 @@ export async function GET() {
   if (!apiKey) {
     return NextResponse.json({
       success: false,
+      placeId: placeId,
+      name: "S Fitness",
+      rating: 5.0,
       error: "Google Places API key is missing",
       reviews: getFallbackReviews()
     });
@@ -15,13 +18,16 @@ export async function GET() {
 
   try {
     const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=reviews,rating,name&key=${apiKey}`;
-    const res = await fetch(url, { next: { revalidate: 3600 } }); // Cache for 1 hour
+    const res = await fetch(url, { next: { revalidate: 300 } }); // Cache for 5 minutes
     const data = await res.json();
 
     if (data.status !== "OK" || !data.result || !data.result.reviews) {
       console.warn("Google Places API returned non-OK status or no reviews:", data.status, data.error_message);
       return NextResponse.json({
         success: false,
+        placeId: placeId,
+        name: "S Fitness",
+        rating: 5.0,
         status: data.status,
         message: data.error_message || "No reviews found",
         reviews: getFallbackReviews()
@@ -37,12 +43,18 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
+      placeId: placeId,
+      name: data.result.name || "S Fitness",
+      rating: data.result.rating || 5.0,
       reviews: reviewsToReturn
     });
   } catch (error: any) {
     console.error("Error fetching Google reviews:", error);
     return NextResponse.json({
       success: false,
+      placeId: placeId,
+      name: "S Fitness",
+      rating: 5.0,
       error: error.message || "Failed to fetch reviews",
       reviews: getFallbackReviews()
     });

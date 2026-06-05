@@ -345,7 +345,7 @@ export default function Home() {
                   <p className="text-[11px] sm:text-xs text-white/40 mt-1">The entry point to performance.</p>
                 </div>
                 <div className="text-right">
-                  <div className="text-xl sm:text-2xl font-extrabold text-white">$199</div>
+                  <div className="text-xl sm:text-2xl font-extrabold text-white">₹16,499</div>
                   <div className="font-mono text-[8px] sm:text-[9px] text-white/40 uppercase">PER MONTH</div>
                 </div>
               </div>
@@ -367,7 +367,7 @@ export default function Home() {
                   <p className="text-[11px] sm:text-xs text-electric-lime/80 mt-1">Full telemetry & dedicated performance director.</p>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl sm:text-3xl font-extrabold text-electric-lime">$499</div>
+                  <div className="text-2xl sm:text-3xl font-extrabold text-electric-lime">₹41,499</div>
                   <div className="font-mono text-[8px] sm:text-[9px] text-white/40 uppercase">PER MONTH</div>
                 </div>
               </div>
