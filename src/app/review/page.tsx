@@ -21,7 +21,7 @@ declare global {
 export default function ReviewPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [rating, setRating] = useState<number>(4.9);
-  const [placeName, setPlaceName] = useState<string>("S. Fitness Gym");
+  const [placeName, setPlaceName] = useState<string>("S FITNESS");
   const [placeId, setPlaceId] = useState<string>("ChIJHXn5AQkvqjsRGkxQLv3ynEg");
   const [loading, setLoading] = useState(true);
 
@@ -39,7 +39,7 @@ export default function ReviewPage() {
           if (data && data.reviews) {
             setReviews(data.reviews);
             setRating(data.rating || 4.9);
-            setPlaceName(data.name || "S. Fitness Gym");
+            setPlaceName(data.name || "S FITNESS");
             setPlaceId(data.placeId || "ChIJHXn5AQkvqjsRGkxQLv3ynEg");
           }
           setLoading(false);
@@ -84,7 +84,7 @@ export default function ReviewPage() {
               
               setReviews(googleReviews);
               setRating(place.rating || 4.9);
-              setPlaceName(place.name || "S. Fitness Gym");
+              setPlaceName(place.name || "S FITNESS");
               setLoading(false);
             } else {
               console.warn("Google Places Service failed status:", status);

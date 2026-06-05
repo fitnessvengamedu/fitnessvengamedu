@@ -9,7 +9,7 @@ export async function GET() {
     return NextResponse.json({
       success: false,
       placeId: placeId,
-      name: "S Fitness",
+      name: "S FITNESS",
       rating: 5.0,
       error: "Google Places API key is missing",
       reviews: getFallbackReviews()
@@ -26,7 +26,7 @@ export async function GET() {
       return NextResponse.json({
         success: false,
         placeId: placeId,
-        name: "S Fitness",
+        name: "S FITNESS",
         rating: 5.0,
         status: data.status,
         message: data.error_message || "No reviews found",
@@ -44,7 +44,7 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       placeId: placeId,
-      name: data.result.name || "S Fitness",
+      name: data.result.name || "S FITNESS",
       rating: data.result.rating || 5.0,
       reviews: reviewsToReturn
     });
@@ -53,7 +53,7 @@ export async function GET() {
     return NextResponse.json({
       success: false,
       placeId: placeId,
-      name: "S Fitness",
+      name: "S FITNESS",
       rating: 5.0,
       error: error.message || "Failed to fetch reviews",
       reviews: getFallbackReviews()
