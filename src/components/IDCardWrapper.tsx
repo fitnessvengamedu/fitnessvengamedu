@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { CreditCard, ShieldAlert, ExternalLink, ShieldCheck } from 'lucide-react'
+import { CreditCard, ShieldAlert, ExternalLink, ShieldCheck, Download } from 'lucide-react'
 import DigitalCard from './DigitalCard'
 
 interface IDCardWrapperProps {
@@ -29,8 +29,36 @@ export default function IDCardWrapper({
   const [activeTab, setActiveTab] = useState<'status' | 'preview'>(
     subscriptionActive || isTest ? 'preview' : 'status'
   )
+  const [isDownloading, setIsDownloading] = useState(false)
 
   const joinDate = new Date(joinDateString)
+
+  const handleDownload = async () => {
+    if (isDownloading) return
+    setIsDownloading(true)
+    try {
+      const { toPng } = await import('html-to-image')
+      const element = document.getElementById('dashboard-member-card-front')
+      if (!element) return
+
+      const dataUrl = await toPng(element, {
+        cacheBust: true,
+        pixelRatio: 3,
+        style: {
+          borderRadius: '16px',
+        }
+      })
+
+      const link = document.createElement('a')
+      link.download = `s-fitness-card-${memberId}.png`
+      link.href = dataUrl
+      link.click()
+    } catch (err) {
+      console.error('Failed to download card:', err)
+    } finally {
+      setIsDownloading(false)
+    }
+  }
 
   return (
     <div className="bg-glass-panel border border-glass-stroke p-6 rounded-2xl flex flex-col h-full justify-between relative overflow-hidden group">
@@ -95,7 +123,7 @@ export default function IDCardWrapper({
         ) : (
           <div className="flex flex-col h-full justify-between relative">
             {/* ID Card Display */}
-            <div className="relative">
+            <div className="relative animate-fade-in" id="dashboard-member-card-front">
               <DigitalCard
                 memberId={memberId}
                 fullName={fullName}
@@ -115,14 +143,22 @@ export default function IDCardWrapper({
               )}
             </div>
 
-            <div className="mt-6 flex flex-col gap-2">
+            <div className="mt-6 flex gap-3">
               <Link
                 href="/dashboard/card"
-                className="w-full py-2.5 bg-white/5 border border-glass-stroke text-white font-bold tracking-wider uppercase text-[10px] font-mono rounded-lg hover:bg-electric-lime hover:text-deep-obsidian transition-all duration-300 flex items-center justify-center gap-2"
+                className="flex-1 py-2.5 bg-white/5 border border-glass-stroke text-white font-bold tracking-wider uppercase text-[10px] font-mono rounded-lg hover:bg-white/10 transition-all duration-300 flex items-center justify-center gap-1.5"
               >
                 <ExternalLink className="w-3.5 h-3.5" />
-                View Standalone Card
+                View 3D
               </Link>
+              <button
+                onClick={handleDownload}
+                disabled={isDownloading}
+                className="flex-1 py-2.5 bg-electric-lime hover:bg-white text-deep-obsidian disabled:opacity-50 font-bold tracking-wider uppercase text-[10px] font-mono rounded-lg transition-all duration-300 flex items-center justify-center gap-1.5"
+              >
+                <Download className={`w-3.5 h-3.5 ${isDownloading ? 'animate-bounce' : ''}`} />
+                {isDownloading ? 'Downloading...' : 'Download PNG'}
+              </button>
             </div>
           </div>
         )}

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ShieldCheck, RotateCw, Printer, AlertTriangle } from 'lucide-react'
+import { ShieldCheck, RotateCw, Printer, AlertTriangle, Download } from 'lucide-react'
 import DigitalCard from './DigitalCard'
 
 interface StandaloneCardViewerProps {
@@ -20,6 +20,7 @@ interface StandaloneCardViewerProps {
 export default function StandaloneCardViewer({ details }: StandaloneCardViewerProps) {
   const [isFlipped, setIsFlipped] = useState(false)
   const [rotate, setRotate] = useState({ x: 0, y: 0 })
+  const [isDownloading, setIsDownloading] = useState(false)
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (isFlipped) return
@@ -43,6 +44,35 @@ export default function StandaloneCardViewer({ details }: StandaloneCardViewerPr
     window.print()
   }
 
+  const handleDownload = async () => {
+    if (isDownloading) return
+    setIsDownloading(true)
+    try {
+      const { toPng } = await import('html-to-image')
+      const targetId = isFlipped ? 'digital-card-back' : 'digital-card-front'
+      const element = document.getElementById(targetId)
+      if (!element) return
+
+      const dataUrl = await toPng(element, {
+        cacheBust: true,
+        pixelRatio: 3,
+        style: {
+          transform: 'none',
+          borderRadius: '16px',
+        }
+      })
+
+      const link = document.createElement('a')
+      link.download = `s-fitness-${isFlipped ? 'back' : 'front'}-${details.memberId}.png`
+      link.href = dataUrl
+      link.click()
+    } catch (err) {
+      console.error('Failed to download card:', err)
+    } finally {
+      setIsDownloading(false)
+    }
+  }
+
   const joinDate = new Date(details.joinDateString)
 
   return (
@@ -63,7 +93,7 @@ export default function StandaloneCardViewer({ details }: StandaloneCardViewerPr
           }}
         >
           {/* Front Side */}
-          <div className="absolute inset-0 backface-hidden rounded-2xl overflow-hidden">
+          <div className="absolute inset-0 backface-hidden rounded-2xl overflow-hidden" id="digital-card-front">
             <DigitalCard
               memberId={details.memberId}
               fullName={details.fullName}
@@ -84,6 +114,7 @@ export default function StandaloneCardViewer({ details }: StandaloneCardViewerPr
 
           {/* Back Side (180deg Rotated) */}
           <div 
+            id="digital-card-back"
             className="absolute inset-0 backface-hidden rounded-2xl bg-gradient-to-br from-[#121212] via-[#0d0d0d] to-[#050505] border border-glass-stroke p-5 flex flex-col justify-between overflow-hidden shadow-inner text-white"
             style={{ transform: 'rotateY(180deg)' }}
           >
@@ -136,7 +167,7 @@ export default function StandaloneCardViewer({ details }: StandaloneCardViewerPr
       </div>
 
       {/* Control Buttons (Hidden when printing) */}
-      <div className="flex gap-4 w-full justify-center print:hidden">
+      <div className="flex gap-4 w-full justify-center print:hidden flex-wrap">
         <button
           onClick={() => setIsFlipped(!isFlipped)}
           className="flex items-center gap-2 px-5 py-3 border border-glass-stroke hover:border-white/20 text-white bg-white/5 font-mono text-xs uppercase tracking-wider rounded-lg transition-colors font-bold"
@@ -147,10 +178,19 @@ export default function StandaloneCardViewer({ details }: StandaloneCardViewerPr
 
         <button
           onClick={handlePrint}
-          className="flex items-center gap-2 px-5 py-3 bg-electric-lime hover:bg-white text-deep-obsidian font-mono text-xs uppercase tracking-wider rounded-lg transition-colors font-bold shadow-[0_0_15px_rgba(223,255,17,0.2)]"
+          className="flex items-center gap-2 px-5 py-3 bg-white/5 border border-glass-stroke hover:bg-white/10 text-white font-mono text-xs uppercase tracking-wider rounded-lg transition-colors font-bold"
         >
-          <Printer className="w-4 h-4" />
+          <Printer className="w-4 h-4 text-electric-lime" />
           Print Pass
+        </button>
+
+        <button
+          onClick={handleDownload}
+          disabled={isDownloading}
+          className="flex items-center gap-2 px-5 py-3 bg-electric-lime hover:bg-white text-deep-obsidian disabled:opacity-50 font-mono text-xs uppercase tracking-wider rounded-lg transition-colors font-bold shadow-[0_0_15px_rgba(223,255,17,0.2)]"
+        >
+          <Download className={`w-4 h-4 ${isDownloading ? 'animate-bounce' : ''}`} />
+          {isDownloading ? 'Downloading...' : 'Download Card'}
         </button>
       </div>
 
