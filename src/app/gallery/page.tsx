@@ -1,13 +1,67 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import { RefreshCw, Play } from "lucide-react";
+import React, { useState, useEffect, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { RefreshCw, Play, Image as ImageIcon, Video, Calendar, Eye } from 'lucide-react';
 
-export default function Gallery() {
+interface GalleryItem {
+  id: string;
+  event_name: string;
+  file_url: string;
+  file_type: string;
+  created_at: string;
+}
+
+export default function GalleryPage() {
+  const [items, setItems] = useState<GalleryItem[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<string>('ALL');
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [activeMedia, setActiveMedia] = useState<GalleryItem | null>(null);
+
+  const fetchGallery = async (showSyncSpinner = false) => {
+    if (showSyncSpinner) setIsSyncing(true);
+    else setIsLoading(true);
+    
+    try {
+      const res = await fetch('/api/gallery');
+      const data = await res.json();
+      if (data && data.items) {
+        setItems(data.items);
+      }
+    } catch (err) {
+      console.error('Error fetching gallery items:', err);
+    } finally {
+      setIsLoading(false);
+      setIsSyncing(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchGallery();
+  }, []);
+
+  // Extract unique events for filters
+  const eventFilters = useMemo(() => {
+    const events = new Set<string>();
+    items.forEach(item => {
+      if (item.event_name) {
+        events.add(item.event_name);
+      }
+    });
+    return ['ALL', ...Array.from(events)];
+  }, [items]);
+
+  // Filter items
+  const filteredItems = useMemo(() => {
+    if (selectedEvent === 'ALL') return items;
+    return items.filter(item => item.event_name === selectedEvent);
+  }, [items, selectedEvent]);
+
   return (
-    <div className="container mx-auto px-4 py-16 md:py-24 bg-deep-obsidian">
+    <div className="container mx-auto px-4 py-16 md:py-24 bg-deep-obsidian min-h-screen">
       {/* Title */}
-      <div className="text-center mb-12 md:mb-24 max-w-2xl mx-auto">
+      <div className="text-center mb-12 md:mb-16 max-w-2xl mx-auto">
         <motion.h1 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -15,122 +69,203 @@ export default function Gallery() {
         >
           TELEMETRY <span className="text-electric-lime text-glow">MEDIA STREAM</span>
         </motion.h1>
-        <p className="text-white/60 text-base leading-relaxed">
-          Google Drive sync pipeline initialized. Live media feed connected to active event indices.
+        <p className="text-white/60 text-sm font-mono uppercase tracking-widest">
+          Secure Live Synced Gym & Event Archive Pipeline
         </p>
       </div>
 
       {/* Sync Status dashboard */}
-      <div className="max-w-5xl mx-auto glass-card p-5 sm:p-8 mb-10 md:mb-16 border-l-4 border-l-electric-lime shadow-[0_0_20px_rgba(223,255,17,0.02)]">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+      <div className="max-w-5xl mx-auto glass-card p-5 sm:p-6 mb-10 border-l-4 border-l-electric-lime shadow-[0_0_20px_rgba(223,255,17,0.02)]">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-4">
             <div className="relative flex h-3 w-3">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-electric-lime opacity-75"></span>
               <span className="relative inline-flex rounded-full h-3 w-3 bg-electric-lime"></span>
             </div>
             <div>
-              <p className="font-mono text-xs uppercase tracking-widest text-white/40">Status: Active</p>
-              <h3 className="text-lg font-bold font-sora text-white">Google Drive Stream Online</h3>
+              <p className="font-mono text-[10px] uppercase tracking-widest text-white/40">Status: Active</p>
+              <h3 className="text-sm sm:text-base font-bold font-sora text-white">Google Drive Stream Online</h3>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 border border-glass-stroke hover:border-electric-lime/30 text-white/80 hover:text-white px-5 py-2.5 rounded-lg text-xs font-mono uppercase tracking-widest transition-all">
-              <RefreshCw className="w-3.5 h-3.5" /> Re-sync Stream
+            <button 
+              onClick={() => fetchGallery(true)}
+              disabled={isSyncing}
+              className="flex items-center gap-2 border border-glass-stroke hover:border-electric-lime/30 text-white/80 hover:text-white px-5 py-2 rounded-lg text-xs font-mono uppercase tracking-widest transition-all"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin text-electric-lime' : ''}`} /> 
+              {isSyncing ? 'Syncing...' : 'Re-sync Stream'}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Grid boxes / Skeletons */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-        {[
-          {
-            id: "FRAME-001",
-            image: "/images/gym_1.jpg",
-            status: "LIVE - STRENGTH ZONE",
-            title: "KINETIC APEX GEAR",
-            metrics: "ISO: 400 | F/2.8 | EXP: 1/120s",
-            data: "WEIGHT PROTOCOL ACTIVE [85KG]"
-          },
-          {
-            id: "FRAME-002",
-            image: "/images/gym_2.jpg",
-            status: "LIVE - POWER CORE",
-            title: "IRON POWER PROTOCOL",
-            metrics: "ISO: 800 | F/2.0 | EXP: 1/200s",
-            data: "HIGH METALLIC DENSITY | SPARK CH: 02"
-          },
-          {
-            id: "FRAME-003",
-            image: "",
-            status: "BUFFERING",
-            title: "CARDIO LAB STREAM",
-            metrics: "STREAMING CH 03",
-            data: "Awaiting next sync cycle..."
-          },
-          {
-            id: "FRAME-004",
-            image: "",
-            status: "BUFFERING",
-            title: "RECOVERY BAY 1",
-            metrics: "STREAMING CH 04",
-            data: "Awaiting next sync cycle..."
-          },
-          {
-            id: "FRAME-005",
-            image: "",
-            status: "BUFFERING",
-            title: "BIOMETRIC LAB B",
-            metrics: "STREAMING CH 05",
-            data: "Awaiting next sync cycle..."
-          },
-          {
-            id: "FRAME-006",
-            image: "",
-            status: "BUFFERING",
-            title: "NEURAL HUB",
-            metrics: "STREAMING CH 06",
-            data: "Awaiting next sync cycle..."
-          }
-        ].map((item, index) => (
-          <div key={index} className="glass-card overflow-hidden group border border-glass-stroke aspect-video relative flex flex-col justify-between p-4.5 sm:p-6 hover:border-electric-lime/30 transition-all duration-300">
-            {item.image ? (
-              <>
-                <img 
-                  src={item.image} 
-                  alt={item.title} 
-                  className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-110 transition-transform duration-700 z-0" 
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-deep-obsidian via-deep-obsidian/30 to-transparent z-10" />
-              </>
+      {/* Dynamic Event Filter Pills */}
+      {eventFilters.length > 1 && (
+        <div className="max-w-5xl mx-auto mb-10 flex flex-wrap gap-2.5 justify-center font-mono text-[10px] uppercase tracking-wider">
+          {eventFilters.map(event => (
+            <button
+              key={event}
+              onClick={() => setSelectedEvent(event)}
+              className={`px-4 py-2 border rounded-full transition-all duration-300 ${
+                selectedEvent === event
+                  ? 'bg-electric-lime text-deep-obsidian border-electric-lime font-bold shadow-[0_0_12px_rgba(223,255,17,0.2)]'
+                  : 'text-white/60 border-glass-stroke hover:text-white hover:border-white/20'
+              }`}
+            >
+              {event === 'ALL' ? 'Show All Events' : event}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Media Grid */}
+      <div className="max-w-5xl mx-auto">
+        {isLoading ? (
+          /* Grid Skeletons */
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="glass-card overflow-hidden border border-glass-stroke aspect-video relative flex flex-col justify-between p-6 animate-pulse">
+                <div className="w-16 h-4 bg-white/5 rounded font-mono" />
+                <div className="space-y-2">
+                  <div className="w-24 h-3 bg-white/10 rounded" />
+                  <div className="w-36 h-4 bg-white/5 rounded" />
+                  <div className="w-20 h-2 bg-white/5 rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : filteredItems.length > 0 ? (
+          <motion.div 
+            layout
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          >
+            <AnimatePresence mode="popLayout">
+              {filteredItems.map((item, index) => {
+                const dateFormatted = new Date(item.created_at).toLocaleDateString('en-IN', {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric'
+                });
+
+                return (
+                  <motion.div 
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.3 }}
+                    key={item.id} 
+                    onClick={() => setActiveMedia(item)}
+                    className="glass-card overflow-hidden group border border-glass-stroke aspect-video relative flex flex-col justify-between p-5 hover:border-electric-lime/30 transition-all duration-300 cursor-pointer"
+                  >
+                    {/* Media File Content */}
+                    {item.file_type === 'image' ? (
+                      <>
+                        <img 
+                          src={item.file_url} 
+                          alt={item.event_name} 
+                          className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-700 z-0" 
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-deep-obsidian via-deep-obsidian/40 to-transparent z-10" />
+                      </>
+                    ) : (
+                      <>
+                        {/* Video Mock/Placeholder Image (using Gym_2) */}
+                        <img 
+                          src="/images/gym_2.jpg" 
+                          alt="Video thumbnail" 
+                          className="absolute inset-0 w-full h-full object-cover opacity-25 group-hover:scale-105 transition-transform duration-700 z-0" 
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-deep-obsidian via-deep-obsidian/40 to-transparent z-10" />
+                        <div className="absolute inset-0 flex items-center justify-center z-20 group-hover:scale-110 transition-transform duration-300">
+                          <div className="w-12 h-12 rounded-full bg-electric-lime/10 border border-electric-lime/30 flex items-center justify-center text-electric-lime">
+                            <Play className="w-5 h-5 fill-current ml-0.5" />
+                          </div>
+                        </div>
+                      </>
+                    )}
+                    
+                    {/* HUD Header */}
+                    <div className="flex justify-between items-start z-20">
+                      <span className="font-mono text-[8px] uppercase tracking-widest bg-white/5 border border-glass-stroke px-2 py-0.5 rounded text-white/50">
+                        {item.file_type === 'video' ? 'VIDEO.MP4' : 'IMAGE.JPG'}
+                      </span>
+                      <div className="flex items-center gap-1">
+                        <span className="font-mono text-[8px] text-white/40">{dateFormatted}</span>
+                        <div className="w-2 h-2 rounded-full bg-electric-lime shadow-[0_0_8px_rgba(223,255,17,0.6)] animate-pulse" />
+                      </div>
+                    </div>
+                    
+                    {/* HUD Footer */}
+                    <div className="space-y-1 z-20">
+                      <p className="font-mono text-[9px] text-electric-lime uppercase tracking-widest font-bold flex items-center gap-1.5">
+                        {item.file_type === 'video' ? <Video className="w-3 h-3" /> : <ImageIcon className="w-3 h-3" />}
+                        {item.event_name || 'General Stream'}
+                      </p>
+                      <h4 className="text-xs font-mono font-bold text-white tracking-wide uppercase truncate max-w-full">
+                        CH-{index + 1} // {item.file_type === 'video' ? 'STREAM_LIVE' : 'FRAME_SYNC'}
+                      </h4>
+                      <p className="font-mono text-[8px] text-white/40 uppercase tracking-widest truncate">
+                        URL ID: {item.id.slice(0, 12)}
+                      </p>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </motion.div>
+        ) : (
+          <div className="glass-card p-12 text-center text-white/40 border border-glass-stroke font-mono text-xs uppercase max-w-lg mx-auto">
+            <p className="mb-2">No media found in the database or drive sync.</p>
+            <p className="text-[10px] text-white/20">Upload event items via the Admin Panel to populate the telemetry screen.</p>
+          </div>
+        )}
+      </div>
+
+      {/* Lightbox / Video Player Modal */}
+      {activeMedia && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-deep-obsidian/95 backdrop-blur-md transition-all duration-300"
+          onClick={() => setActiveMedia(null)}
+        >
+          <div 
+            className="relative max-w-4xl w-full bg-zinc-950 border border-glass-stroke rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.8)]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {activeMedia.file_type === 'image' ? (
+              <img 
+                src={activeMedia.file_url} 
+                alt={activeMedia.event_name} 
+                className="w-full max-h-[70vh] object-contain mx-auto"
+              />
             ) : (
-              <div className="absolute inset-0 bg-gradient-to-tr from-electric-lime/5 via-transparent to-transparent opacity-30 z-0" />
+              <video 
+                src={activeMedia.file_url} 
+                controls 
+                autoPlay 
+                className="w-full max-h-[70vh] object-contain mx-auto"
+              />
             )}
-            
-            <div className="flex justify-between items-start z-20">
-              <span className="font-mono text-[9px] uppercase tracking-widest bg-white/5 border border-glass-stroke px-2 py-0.5 rounded text-white/60">
-                {item.id}
-              </span>
-              <div className={`w-2.5 h-2.5 rounded-full ${item.image ? 'bg-electric-lime shadow-[0_0_10px_rgba(223,255,17,0.6)]' : 'bg-white/20'} animate-pulse`} />
-            </div>
-            
-            <div className="space-y-1.5 z-20">
-              <p className="font-mono text-[9px] text-electric-lime uppercase tracking-widest font-bold">
-                {item.status}
-              </p>
-              <h4 className="text-sm font-bold font-sora text-white tracking-wide uppercase">
-                {item.title}
-              </h4>
-              <p className="font-mono text-[8px] text-white/40 uppercase tracking-widest">
-                {item.metrics}
-              </p>
-              <p className="font-mono text-[9px] text-white/60 truncate">
-                {item.data}
-              </p>
+            <div className="p-6 bg-zinc-950 border-t border-glass-stroke flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <p className="font-mono text-[10px] text-electric-lime uppercase tracking-widest font-bold mb-1">
+                  Event: {activeMedia.event_name}
+                </p>
+                <h4 className="text-base font-bold font-sora text-white">
+                  {activeMedia.file_type === 'video' ? 'Video Stream Active' : 'Captured Image Frame'}
+                </h4>
+              </div>
+              <button 
+                onClick={() => setActiveMedia(null)}
+                className="px-5 py-2.5 bg-white/5 hover:bg-white/10 text-white rounded-lg text-xs font-mono uppercase tracking-widest transition-all border border-glass-stroke"
+              >
+                Close Stream
+              </button>
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

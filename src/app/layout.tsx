@@ -33,12 +33,25 @@ export default async function RootLayout({
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
+  let userWithRole = null;
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+    userWithRole = {
+      ...user,
+      role: profile?.role || 'member'
+    };
+  }
+
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body className={`${sora.variable} ${jetbrainsMono.variable} font-sans min-h-screen flex flex-col bg-deep-obsidian text-foreground antialiased`} suppressHydrationWarning>
         <SmoothScroll>
           {/* TopNavBar */}
-          <TopNavBar appName={process.env.NEXT_PUBLIC_APP_NAME || "Fitness Gym"} user={user} />
+          <TopNavBar appName={process.env.NEXT_PUBLIC_APP_NAME || "Fitness Gym"} user={userWithRole} />
 
           {/* Main Content */}
           <main className="flex-1 pt-20">

@@ -45,6 +45,14 @@ export default function TopNavBar({ appName, user }: { appName: string, user?: a
         </div>
 
         <div className="flex items-center gap-3 md:gap-4">
+          {user && user.role === 'admin' && (
+            <Link 
+              href="/admin" 
+              className="border border-electric-lime/30 hover:border-electric-lime hover:bg-electric-lime/10 text-electric-lime font-mono text-[10px] sm:text-xs px-3 sm:px-5 py-2 sm:py-2.5 tracking-wider sm:tracking-widest rounded-lg transition-all"
+            >
+              Admin Panel
+            </Link>
+          )}
           {user ? (
             <Link 
               href="/dashboard" 
@@ -109,6 +117,15 @@ export default function TopNavBar({ appName, user }: { appName: string, user?: a
           })}
           
           <div className="pt-4 flex flex-col gap-3">
+            {user && user.role === 'admin' && (
+              <Link 
+                href="/admin" 
+                onClick={() => setIsOpen(false)}
+                className="border border-electric-lime/30 hover:border-electric-lime hover:bg-electric-lime/10 text-electric-lime font-mono text-center py-3 text-xs tracking-widest rounded-lg transition-all"
+              >
+                Admin Panel
+              </Link>
+            )}
             {user ? (
               <Link 
                 href="/dashboard" 

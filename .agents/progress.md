@@ -21,6 +21,13 @@
   - Modify Razorpay webhook to record `current_period_start` (Paid Date) and `current_period_end` (Repay Due Date) in `subscriptions` table
   - Add 7-day pre-due-date automated Telegram notifications to members and trainers/owners in `src/app/api/telegram/cron/route.ts`
   - Implement and execute test verification suite in `scripts/test-payment-reminder.js`
+- Enhancing Admin Gym Dashboard & Gallery Events:
+  - Retrieve and pass user roles from server layout to front-end header
+  - Render secure "Admin Panel" menu option for administrators on both mobile/desktop layout
+  - Build new Admin Command Center `/admin` displaying active member registry, subscriptions, contact info, and upcoming renewal date alert indicators
+  - Implement robust event-based upload pipeline at `/api/admin/upload` supporting `event_name` values and prefix naming on Google Drive
+  - Build dynamic, event-filtered gallery view page at `/gallery` supporting live synchronization, video players, and direct Google Drive file listing fallback
+  - Verify full project compilation and execution (`npm run build` completed successfully)
 
 **Pending Tasks:**
 - None
