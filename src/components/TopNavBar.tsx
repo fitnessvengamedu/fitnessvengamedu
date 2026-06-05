@@ -1,10 +1,12 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 export default function TopNavBar({ appName, user }: { appName: string, user?: any }) {
   const pathname = usePathname()
+  const [isOpen, setIsOpen] = useState(false)
 
   const navLinks = [
     { name: 'Training', href: '/' },
@@ -42,21 +44,98 @@ export default function TopNavBar({ appName, user }: { appName: string, user?: a
           })}
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 md:gap-4">
           {user ? (
-            <Link href="/dashboard" className="primary-btn">
-              Dashboard Access
+            <Link 
+              href="/dashboard" 
+              className="primary-btn text-[10px] sm:text-xs px-4 sm:px-6 py-2 sm:py-2.5 tracking-wider sm:tracking-widest"
+            >
+              <span className="inline sm:hidden">Dashboard</span>
+              <span className="hidden sm:inline">Dashboard Access</span>
             </Link>
           ) : (
             <>
               <Link href="/signin" className="hidden lg:block text-white/60 hover:text-electric-lime transition-colors font-mono text-xs uppercase tracking-widest">
                 Member Login
               </Link>
-              <Link href="/signup" className="primary-btn">
-                Join As A Member
+              <Link 
+                href="/signup" 
+                className="primary-btn text-[10px] sm:text-xs px-4 sm:px-6 py-2 sm:py-2.5 tracking-wider sm:tracking-widest"
+              >
+                <span className="inline sm:hidden">Join</span>
+                <span className="hidden sm:inline">Join As A Member</span>
               </Link>
             </>
           )}
+
+          {/* Premium Animated Hamburger Menu Button */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="md:hidden relative w-10 h-10 flex flex-col items-center justify-center border border-glass-stroke rounded-lg text-white hover:text-electric-lime hover:border-electric-lime/30 transition-all duration-300 active:scale-95 z-50 cursor-pointer"
+            aria-label="Toggle Menu"
+          >
+            <span className={`w-5 h-0.5 bg-current transition-all duration-300 absolute ${isOpen ? 'rotate-45' : '-translate-y-1.5'}`} />
+            <span className={`w-5 h-0.5 bg-current transition-all duration-300 absolute ${isOpen ? 'opacity-0 scale-x-0' : ''}`} />
+            <span className={`w-5 h-0.5 bg-current transition-all duration-300 absolute ${isOpen ? '-rotate-45' : 'translate-y-1.5'}`} />
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Menu Dropdown Container */}
+      <div 
+        className={`md:hidden absolute top-20 left-0 w-full bg-background/95 backdrop-blur-2xl border-b border-glass-stroke shadow-[0_15px_30px_rgba(0,0,0,0.6)] transition-all duration-300 ease-in-out origin-top ${
+          isOpen 
+            ? 'opacity-100 scale-y-100 pointer-events-auto' 
+            : 'opacity-0 scale-y-95 pointer-events-none'
+        }`}
+      >
+        <div className="flex flex-col px-6 py-8 gap-5 font-mono text-xs uppercase tracking-widest">
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href
+            return (
+              <Link 
+                key={link.name}
+                href={link.href} 
+                onClick={() => setIsOpen(false)}
+                className={`transition-all duration-300 py-3 border-b border-white/5 ${
+                  isActive 
+                    ? 'text-electric-lime pl-2 border-electric-lime/20' 
+                    : 'text-white/60 hover:text-electric-lime hover:pl-2'
+                }`}
+              >
+                {link.name}
+              </Link>
+            )
+          })}
+          
+          <div className="pt-4 flex flex-col gap-3">
+            {user ? (
+              <Link 
+                href="/dashboard" 
+                onClick={() => setIsOpen(false)}
+                className="primary-btn text-center py-3 text-xs tracking-widest"
+              >
+                Dashboard Access
+              </Link>
+            ) : (
+              <>
+                <Link 
+                  href="/signin" 
+                  onClick={() => setIsOpen(false)}
+                  className="text-white/60 hover:text-electric-lime text-center py-3 transition-colors font-mono text-xs uppercase tracking-widest border border-glass-stroke rounded-lg"
+                >
+                  Member Login
+                </Link>
+                <Link 
+                  href="/signup" 
+                  onClick={() => setIsOpen(false)}
+                  className="primary-btn text-center py-3 text-xs tracking-widest"
+                >
+                  Join As A Member
+                </Link>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </nav>

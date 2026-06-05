@@ -38,6 +38,12 @@ export async function POST(request: Request) {
       const planId = event.payload.subscription.entity.plan_id
       const userId = event.payload.subscription.entity.notes?.userId
 
+      const currentStartSec = event.payload.subscription.entity.current_start
+      const currentEndSec = event.payload.subscription.entity.current_end
+      
+      const currentPeriodStart = currentStartSec ? new Date(currentStartSec * 1000).toISOString() : new Date().toISOString()
+      const currentPeriodEnd = currentEndSec ? new Date(currentEndSec * 1000).toISOString() : null
+
       // If we don't have userId in notes, we can look it up by subscription_id
       let query = supabaseAdmin
         .from('subscriptions')
@@ -45,6 +51,8 @@ export async function POST(request: Request) {
           status: status,
           razorpay_payment_id: paymentId,
           plan_id: planId,
+          current_period_start: currentPeriodStart,
+          current_period_end: currentPeriodEnd,
           updated_at: new Date().toISOString()
         })
 

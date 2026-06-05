@@ -5,10 +5,10 @@ import { Shield, Award, HeartPulse } from "lucide-react";
 
 export default function About() {
   return (
-    <div className="container mx-auto px-4 py-24 bg-deep-obsidian">
+    <div className="container mx-auto px-4 py-16 md:py-24 bg-deep-obsidian">
       
       {/* Hero Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-24 max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center mb-16 md:mb-24 max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
@@ -19,7 +19,7 @@ export default function About() {
             <div className="h-[1px] w-8 bg-electric-lime" />
             <span>Facility Overview</span>
           </div>
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tighter leading-[1.1] font-sora text-white">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold tracking-tighter leading-[1.1] font-sora text-white">
             OUR LEGACY OF <br />
             <span className="text-electric-lime text-glow font-extrabold">STRENGTH & GRIT</span>
           </h1>
@@ -38,7 +38,7 @@ export default function About() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1 }}
-          className="relative flex items-center justify-center h-[350px] md:h-[450px] rounded-3xl bg-white/2 border border-glass-stroke shadow-[0_0_40px_rgba(223,255,17,0.03)] overflow-hidden group cursor-pointer"
+          className="relative flex items-center justify-center h-[260px] sm:h-[350px] md:h-[450px] rounded-3xl bg-white/2 border border-glass-stroke shadow-[0_0_40px_rgba(223,255,17,0.03)] overflow-hidden group cursor-pointer"
         >
           <div className="absolute inset-0 bg-gradient-to-tr from-electric-lime/10 via-transparent to-apex-crimson/5 opacity-50 z-10 pointer-events-none group-hover:opacity-80 transition-opacity" />
           <img 
@@ -49,12 +49,12 @@ export default function About() {
           <div className="absolute inset-0 bg-gradient-to-t from-deep-obsidian via-transparent to-transparent z-10" />
 
           {/* Diagnostic Overlay HUD */}
-          <div className="absolute top-6 left-6 z-20 flex items-center gap-2 bg-deep-obsidian/85 backdrop-blur-md px-3 py-1.5 rounded-full border border-glass-stroke">
+          <div className="absolute top-4 left-4 sm:top-6 sm:left-6 z-20 flex items-center gap-2 bg-deep-obsidian/85 backdrop-blur-md px-3 py-1.5 rounded-full border border-glass-stroke">
             <span className="w-2.5 h-2.5 rounded-full bg-apex-crimson animate-ping" />
             <span className="font-mono text-[9px] text-white uppercase tracking-wider font-bold">REC: CHAMBER CH-02</span>
           </div>
 
-          <div className="absolute bottom-6 left-6 right-6 z-20 bg-deep-obsidian/85 backdrop-blur-md p-4 rounded-2xl border border-glass-stroke space-y-2">
+          <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 z-20 bg-deep-obsidian/85 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-glass-stroke space-y-2">
             <div className="flex justify-between items-center text-[8px] font-mono text-white/40">
               <span>SYSTEM DIAGNOSTIC: READY</span>
               <span>10.2 FPS</span>
@@ -75,8 +75,8 @@ export default function About() {
       </div>
 
       {/* Core Values Section */}
-      <div className="max-w-7xl mx-auto mb-24">
-        <h2 className="text-3xl md:text-5xl font-extrabold text-center font-sora text-white mb-16 tracking-tight">
+      <div className="max-w-7xl mx-auto mb-16 md:mb-24">
+        <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center font-sora text-white mb-10 md:mb-16 tracking-tight">
           OUR <span className="text-electric-lime text-glow">CORE PROTOCOLS</span>
         </h2>
 
@@ -110,7 +110,7 @@ export default function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.15, duration: 0.6 }}
-              className={`glass-card p-8 flex flex-col items-center text-center transition-all duration-300 ${value.glow}`}
+              className={`glass-card p-6 sm:p-8 flex flex-col items-center text-center transition-all duration-300 ${value.glow}`}
             >
               <div className={`w-16 h-16 rounded-xl bg-white/5 border border-glass-stroke flex items-center justify-center mb-6 ${value.color}`}>
                 <value.icon className="w-8 h-8" />

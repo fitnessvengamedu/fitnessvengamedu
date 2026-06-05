@@ -1,34 +1,38 @@
-# Conversation Summary: Apex Elite Stability & Optimization
+# S Fitness - Migration Summary
 
-This file summarizes the actions taken and features implemented during the recent conversation sessions to resolve the Vercel deployment blockers and optimize layout behavior.
+This file summarizes the migration of the Telegram Bot infrastructure to Python and the implementation of the live Google Reviews sync module.
 
----
+## 1. Telegram Bots Migration (Python)
+- **Goal**: Replaced the legacy Node.js GramJS/Grammy bots with high-performance Python equivalents utilizing `pyTelegramBotAPI` and `supabase-py` for stable long-polling.
+- **Files Created**:
+  - `user_bot.py`: Manages member interaction, checking subscription status via Supabase, and linking accounts using user metadata.
+  - `trainer_bot.py`: Allows trainers/owners to view gym stats, list active premium members, and send direct Telegram notifications using member email/ID.
+- **Important Enhancements**:
+  - Configured standard output/error to UTF-8 on load:
+    ```python
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(encoding='utf-8')
+    ```
+    This completely prevents encoding errors when printing emojis in Windows terminal environments.
+  - Removed old JavaScript files (`user_bot.js` and `trainer_bot.js`).
 
-## 1. Objectives Addressed
-* **Fix Vercel Build Failure**: Resolved the compile-time error (`Empty token!`) in Telegram bot endpoints preventing site deployment.
-* **Implement Local Development Server**: Staged and verified the Turbopack dev server locally at `http://localhost:3000`.
-* **Resolve Layout Hydration Mismatch**: Addressed the browser console warning complaining about server/client class attribute mismatch on the `<html>` and `<body>` tags.
+## 2. Live Google Reviews Integration
+- **Client-Side Google Places Service**:
+  - Bypassed server-side Referer restrictions by loading and executing the official Google Places JS API directly on the client browser.
+  - Dynamically injects script tag:
+    `https://maps.googleapis.com/maps/api/js?key=...&libraries=places`
+- **Real-Time Synchronization**:
+  - Queries Google Places API directly on page load using `google.maps.places.PlacesService` to guarantee new reviews reflect immediately.
+  - Implemented 4.5-second connection watchdog fallback to local testimonials if API quota is reached or network is offline.
+- **Rating Filtering Rule**:
+  - Filters all reviews client-side (and server-side fallback) to only display reviews with **rating >= 3 stars**. Reviews rated 1 or 2 stars are filtered out.
+- **Visual Design**:
+  - High-end glassmorphism styling matching S Fitness brand guidelines.
+  - Features reviewer name, electric lime stars, Google verified status badge, and custom motion animations.
 
----
-
-## 2. Features Added & Modified
-
-### A. Telegram Bot Token Build-Time Fallbacks
-* **Files Modified**: 
-  * `src/app/api/telegram/member/route.ts`
-  * `src/app/api/telegram/trainer/route.ts`
-* **Change**: Added fallback dummy tokens (`0000000000:dummy_member_token` and `0000000000:dummy_trainer_token`) to prevent the `grammy` constructor from throwing an `Empty token!` exception during the static page generation phase when production environment variables are not injected at compile-time.
-
-### B. Layout Hydration Mismatch Suppression
-* **File Modified**:
-  * `src/app/layout.tsx`
-* **Change**: Injected the `suppressHydrationWarning` attribute into both the `<html>` and `<body>` tags. This silences React console warnings caused by browser extensions (like password managers, dark mode extensions, translation tools) or development hot-reload cache mismatches affecting font-class hash outputs.
-
----
-
-## 3. Deployment & Verification Status
-
-* **Vercel Builds**: **Deploying successfully** without failures.
-* **Production Domain**: Live at [https://fitness-vengamedu.vercel.app](https://fitness-vengamedu.vercel.app)
-* **Local Development**: Dev server running in the background at `http://localhost:3000`.
-* **Git Version Control**: All commits pushed successfully to `main` branch.
+## 3. Environment Dependencies
+The system relies on the following environment variables (stored securely in `.env` and `.env.local`):
+- `NEXT_PUBLIC_GOOGLE_PLACES_API_KEY`: Restricted Google API Key
+- `GOOGLE_PLACE_ID`: Google Place ID for the gym location
+- `TELEGRAM_MEMBER_BOT_TOKEN` & `TELEGRAM_TRAINER_BOT_TOKEN`: Telegram API tokens
+- `NEXT_PUBLIC_SUPABASE_URL` & `SUPABASE_SERVICE_ROLE_KEY`: Supabase Auth and Database credentials

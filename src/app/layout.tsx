@@ -46,15 +46,15 @@ export default async function RootLayout({
           </main>
 
           {/* Footer */}
-          <footer className="bg-deep-obsidian border-t border-glass-stroke w-full py-16">
-            <div className="flex flex-col lg:flex-row justify-between items-start px-4 md:px-12 gap-12 w-full max-w-7xl mx-auto">
+          <footer className="bg-deep-obsidian border-t border-glass-stroke w-full py-12 md:py-16">
+            <div className="flex flex-col lg:flex-row justify-between items-start px-4 md:px-12 gap-10 lg:gap-12 w-full max-w-7xl mx-auto">
               
               {/* Brand & Address */}
-              <div className="flex flex-col items-center md:items-start gap-4 flex-1">
+              <div className="flex flex-col items-start gap-4 flex-1">
                 <div className="text-3xl font-bold tracking-tighter text-white font-sora">
                   <span className="text-electric-lime uppercase animate-brand-pulse inline-block">{process.env.NEXT_PUBLIC_APP_NAME || "Fitness Gym"}</span>
                 </div>
-                <div className="text-white/60 font-mono text-xs leading-relaxed max-w-sm text-center md:text-left">
+                <div className="text-white/60 font-mono text-xs leading-relaxed max-w-sm text-left">
                   <p className="mb-2 font-bold text-white/80">COMMAND CENTER</p>
                   <p>{process.env.NEXT_PUBLIC_GYM_ADDRESS}</p>
                   <p className="mt-2 text-electric-lime/80 hover:text-electric-lime transition-colors">
@@ -65,18 +65,18 @@ export default async function RootLayout({
                   </p>
                 </div>
               </div>
-
+ 
               {/* Quick Links */}
-              <div className="flex flex-col items-center md:items-start gap-4 flex-1">
-                <p className="font-bold text-white/80 font-mono text-xs uppercase tracking-widest border-b border-glass-stroke pb-2 w-full md:w-auto">Protocols</p>
-                <div className="flex flex-col gap-3 font-mono text-[11px] uppercase tracking-widest text-center md:text-left">
+              <div className="flex flex-col items-start gap-4 flex-1 w-full sm:w-auto">
+                <p className="font-bold text-white/80 font-mono text-xs uppercase tracking-widest border-b border-glass-stroke pb-2 w-full sm:w-auto">Protocols</p>
+                <div className="flex flex-col gap-3 font-mono text-[11px] uppercase tracking-widest text-left">
                   <Link href="#" className="text-white/40 hover:text-electric-lime transition-all">Privacy Protocol</Link>
                   <Link href="#" className="text-white/40 hover:text-electric-lime transition-all">Terms of Service</Link>
                   <Link href="#" className="text-white/40 hover:text-electric-lime transition-all">Telemetry Support</Link>
                   <Link href="/feedback" className="text-white/40 hover:text-electric-lime transition-all">Submit Feedback</Link>
                 </div>
               </div>
-
+ 
               {/* Map Embed */}
               <div className="w-full lg:w-[400px] h-[200px] rounded-xl overflow-hidden border border-glass-stroke bg-white/5">
                 {process.env.NEXT_PUBLIC_GYM_MAP_EMBED ? (

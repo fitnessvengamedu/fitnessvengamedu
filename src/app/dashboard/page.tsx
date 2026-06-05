@@ -61,6 +61,9 @@ export default async function DashboardPage({
   const dailyLogs = profile?.daily_logs || metadata.daily_logs || []
   const goalsList = profile?.goals_list || metadata.goals_list || []
 
+  const telegramChatId = profile?.telegram_chat_id || metadata.telegram_chat_id || ''
+  const isTelegramLinked = !!telegramChatId
+
   // Determine period stay from active subscription plan
   let periodStayMonths = 1
   if (subscription) {
@@ -176,11 +179,24 @@ export default async function DashboardPage({
           <div className="bg-deep-obsidian/50 border border-glass-stroke p-8 rounded-2xl flex flex-col h-full">
             <h3 className="text-lg font-bold text-white font-sora mb-2">TELEGRAM PROTOCOL</h3>
             <p className="text-sm text-white/60 mb-6 leading-relaxed flex-1">
-              Link your Telegram account to receive encrypted workout plans, diet instructions, and direct comms from your trainer.
+              {isTelegramLinked 
+                ? "Your Telegram account is active and linked. You will receive progress reports, workout routines, and fitness metrics directly to your chat."
+                : "Link your Telegram account to receive encrypted workout plans, diet instructions, and direct comms from your trainer."}
             </p>
-            <Link href="#" className="w-full py-3 bg-white text-deep-obsidian font-bold tracking-widest uppercase text-xs rounded hover:bg-electric-lime transition-colors text-center mt-auto">
-              Link Device
-            </Link>
+            {isTelegramLinked ? (
+              <div className="w-full py-3 bg-electric-lime/10 border border-electric-lime/30 text-electric-lime font-mono text-center text-xs uppercase tracking-widest rounded-lg mt-auto">
+                Status: Connected
+              </div>
+            ) : (
+              <Link 
+                href={`https://t.me/${process.env.TELEGRAM_MEMBER_BOT_USERNAME || 'My_gym_tranning_bot'}?start=${user.id}`}
+                target="_blank"
+                rel="noopener noreferrer" 
+                className="w-full py-3 bg-white text-deep-obsidian font-bold tracking-widest uppercase text-xs rounded hover:bg-electric-lime transition-colors text-center mt-auto"
+              >
+                Link Device
+              </Link>
+            )}
           </div>
 
           <GoalTracker 

@@ -5,13 +5,13 @@ import { RefreshCw, Play } from "lucide-react";
 
 export default function Gallery() {
   return (
-    <div className="container mx-auto px-4 py-24 bg-deep-obsidian">
+    <div className="container mx-auto px-4 py-16 md:py-24 bg-deep-obsidian">
       {/* Title */}
-      <div className="text-center mb-24 max-w-2xl mx-auto">
+      <div className="text-center mb-12 md:mb-24 max-w-2xl mx-auto">
         <motion.h1 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-4xl md:text-6xl font-extrabold tracking-tighter font-sora text-white leading-tight mb-4"
+          className="text-3xl sm:text-4xl md:text-6xl font-extrabold tracking-tighter font-sora text-white leading-tight mb-4"
         >
           TELEMETRY <span className="text-electric-lime text-glow">MEDIA STREAM</span>
         </motion.h1>
@@ -21,7 +21,7 @@ export default function Gallery() {
       </div>
 
       {/* Sync Status dashboard */}
-      <div className="max-w-5xl mx-auto glass-card p-8 mb-16 border-l-4 border-l-electric-lime shadow-[0_0_20px_rgba(223,255,17,0.02)]">
+      <div className="max-w-5xl mx-auto glass-card p-5 sm:p-8 mb-10 md:mb-16 border-l-4 border-l-electric-lime shadow-[0_0_20px_rgba(223,255,17,0.02)]">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-4">
             <div className="relative flex h-3 w-3">
@@ -93,7 +93,7 @@ export default function Gallery() {
             data: "Awaiting next sync cycle..."
           }
         ].map((item, index) => (
-          <div key={index} className="glass-card overflow-hidden group border border-glass-stroke aspect-video relative flex flex-col justify-between p-6 hover:border-electric-lime/30 transition-all duration-300">
+          <div key={index} className="glass-card overflow-hidden group border border-glass-stroke aspect-video relative flex flex-col justify-between p-4.5 sm:p-6 hover:border-electric-lime/30 transition-all duration-300">
             {item.image ? (
               <>
                 <img 
