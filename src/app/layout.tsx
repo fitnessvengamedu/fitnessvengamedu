@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Dumbbell } from "lucide-react";
 import SmoothScroll from "@/components/SmoothScroll";
 import TopNavBar from "@/components/TopNavBar";
+import { Analytics } from '@vercel/analytics/next';
 
 const sora = Sora({ 
   subsets: ["latin"],
@@ -117,6 +118,7 @@ export default async function RootLayout({
             </div>
           </footer>
         </SmoothScroll>
+        <Analytics />
       </body>
     </html>
   );
