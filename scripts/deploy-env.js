@@ -1,15 +1,19 @@
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { spawnSync } = require('child_process');
 
-// Overwrite existing variables by passing --force
+// Overwrite existing variables using stdin input to avoid Windows shell escaping issues
 function runVercelEnvAdd(key, value, environment) {
   console.log(`Adding ${key} to ${environment}...`);
   try {
-    const escapedValue = value.replace(/"/g, '\\"');
-    execSync(`npx vercel env add "${key}" "${environment}" --value "${escapedValue}" --yes --force`, {
-      stdio: 'ignore'
+    const result = spawnSync('npx', ['vercel', 'env', 'add', key, environment, '--force'], {
+      input: value,
+      encoding: 'utf-8',
+      shell: true
     });
+    if (result.status !== 0) {
+      throw new Error(result.stderr?.trim() || `Exit code ${result.status}`);
+    }
     console.log(`Successfully added ${key} to ${environment}`);
   } catch (err) {
     console.error(`Failed to add ${key} to ${environment}:`, err.message);

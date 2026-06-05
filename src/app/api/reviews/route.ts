@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY;
-  const placeId = process.env.GOOGLE_PLACE_ID || "ChIJHXn5AQkvqjsRGkxQLv3ynEg";
+  const apiKey = process.env.GOOGLE_PLACES_API_SERVER_KEY || process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY;
+  const placeId = process.env.NEXT_PUBLIC_GOOGLE_PLACE_ID || process.env.GOOGLE_PLACE_ID || "ChIJHXn5AQkvqjsRGkxQLv3ynEg";
 
   // If no API key is set, return fallback high-quality reviews immediately
   if (!apiKey) {
@@ -64,31 +64,38 @@ export async function GET() {
 function getFallbackReviews() {
   return [
     {
-      author_name: "Rahul Sharma",
+      author_name: "M.K. Bharathi",
       rating: 5,
-      text: "The best gym in Vengamedu! High-tech equipment, elite atmosphere, and very professional trainers. Highly recommended!",
-      relative_time_description: "2 weeks ago",
+      text: "Mr. Shanmugham is an excellent fitness trainer. The environment at the gym is very nice. He is friendly, patient and encouraging. I am sure that you can lead a healthy life.",
+      relative_time_description: "2 years ago",
       profile_photo_url: ""
     },
     {
-      author_name: "Priya K.",
+      author_name: "Khalaivani R",
       rating: 5,
-      text: "Super clean, modern styling, and the Telegram bot check-ins are so helpful. I've been training here for 3 months now and love it.",
-      relative_time_description: "1 month ago",
+      text: "Good and safe place to work out. Mr. Shanmugam and Mrs. Vaghavi is so humble and supportive throughout. I strongly believe this is the best gym in karur.",
+      relative_time_description: "2 years ago",
       profile_photo_url: ""
     },
     {
-      author_name: "Karthik Raja",
+      author_name: "KN TV",
       rating: 5,
-      text: "Excellent equipment quality and spacious layout. The daily motivational quotes on the dashboard keep me going!",
-      relative_time_description: "3 days ago",
+      text: "Good and help for fitness, coach is very nice and are very kindly helps us to our health, please visit and make your body fit...",
+      relative_time_description: "2 years ago",
       profile_photo_url: ""
     },
     {
-      author_name: "Suresh Kumar",
-      rating: 4,
-      text: "Elite coaching, very helpful trainer. Love the digital membership card and bio-metric reports. Best fitness center around Karur.",
-      relative_time_description: "1 month ago",
+      author_name: "Arvind Ponner",
+      rating: 5,
+      text: "Good gym my brother becomes sub inspector due to this gym well knowledge trainer",
+      relative_time_description: "2 years ago",
+      profile_photo_url: ""
+    },
+    {
+      author_name: "Virat Harish",
+      rating: 5,
+      text: "Best place to do every workout with all equipments available.",
+      relative_time_description: "a year ago",
       profile_photo_url: ""
     }
   ];

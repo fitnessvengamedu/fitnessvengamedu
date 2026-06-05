@@ -75,6 +75,22 @@ export default function GoalTracker({
     setIsEditing(true)
   }
 
+  const handleAddNewGoalDirect = () => {
+    const baseGoals = goals.length > 0 ? goals.map(g => ({ ...g })) : []
+    if (baseGoals.length < 3) {
+      baseGoals.push({
+        id: Math.random().toString(),
+        objective: '',
+        weight: '',
+        calories: '',
+        timeLimit: '',
+        active: baseGoals.length === 0
+      })
+    }
+    setEditGoalsList(baseGoals)
+    setIsEditing(true)
+  }
+
   const handleAddSlot = () => {
     if (editGoalsList.length >= 3) return
     setEditGoalsList([
@@ -176,11 +192,11 @@ export default function GoalTracker({
 
   if (isEditing) {
     return (
-      <div className="bg-glass-panel border border-glass-stroke p-8 rounded-2xl flex flex-col h-full relative overflow-hidden group">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-electric-lime/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="bg-glass-panel border border-glass-stroke p-8 rounded-2xl flex flex-col h-full relative overflow-hidden group min-h-[460px]">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-electric-lime/5 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:scale-110 transition-transform duration-500" />
         
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-lg font-bold text-white font-sora flex items-center gap-2">
+          <h3 className="text-xl font-bold text-white font-sora flex items-center gap-3">
             <Target className="w-5 h-5 text-electric-lime" />
             MANAGE GOALS ({editGoalsList.length}/3)
           </h3>
@@ -311,22 +327,36 @@ export default function GoalTracker({
   }
 
   return (
-    <div className="bg-glass-panel border border-glass-stroke p-8 rounded-2xl flex flex-col h-full relative overflow-hidden group">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-electric-lime/5 rounded-full blur-3xl pointer-events-none group-hover:scale-110 transition-transform duration-500" />
+    <div className="bg-glass-panel border border-glass-stroke p-8 rounded-2xl flex flex-col h-full relative overflow-hidden group min-h-[460px] justify-between">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-electric-lime/5 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:scale-110 transition-transform duration-500" />
       
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-lg font-bold text-white font-sora flex items-center gap-2">
-          <Target className="w-5 h-5 text-electric-lime animate-pulse" />
+        <h3 className="text-xl font-bold text-white font-sora flex items-center gap-3">
+          <Target className="w-5 h-5 text-electric-lime" />
           GOAL PROTOCOL
         </h3>
-        <button 
-          type="button"
-          onClick={handleStartEdit}
-          disabled={isLoading}
-          className="p-1.5 rounded-lg border border-glass-stroke hover:border-electric-lime hover:bg-electric-lime/10 text-white/60 hover:text-electric-lime transition-all disabled:opacity-40"
-        >
-          <Edit2 className="w-3.5 h-3.5" />
-        </button>
+        <div className="flex items-center gap-2">
+          {goals.length < 3 && (
+            <button 
+              type="button"
+              onClick={handleAddNewGoalDirect}
+              disabled={isLoading}
+              className="p-1.5 rounded-lg border border-glass-stroke hover:border-electric-lime hover:bg-electric-lime/10 text-white/60 hover:text-electric-lime transition-all disabled:opacity-40"
+              title="Add New Goal"
+            >
+              <Plus className="w-3.5 h-3.5" />
+            </button>
+          )}
+          <button 
+            type="button"
+            onClick={handleStartEdit}
+            disabled={isLoading}
+            className="p-1.5 rounded-lg border border-glass-stroke hover:border-electric-lime hover:bg-electric-lime/10 text-white/60 hover:text-electric-lime transition-all disabled:opacity-40"
+            title="Edit Goals"
+          >
+            <Edit2 className="w-3.5 h-3.5" />
+          </button>
+        </div>
       </div>
 
       {activeGoal ? (

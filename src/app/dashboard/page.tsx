@@ -1,10 +1,11 @@
 import { redirect } from 'next/navigation'
 import { createClient, createAdminClient } from '@/utils/supabase/server'
 import Link from 'next/link'
-import { User, Droplet, MapPin, Phone, ShieldCheck } from 'lucide-react'
+import { User, Droplet, MapPin, Phone, ShieldCheck, Send } from 'lucide-react'
 import BmiCalculator from '@/components/BmiCalculator'
-import DigitalCard from '@/components/DigitalCard'
+import IDCardWrapper from '@/components/IDCardWrapper'
 import GoalTracker from '@/components/GoalTracker'
+import DietProtocol from '@/components/DietProtocol'
 
 export default async function DashboardPage({
   searchParams,
@@ -154,42 +155,50 @@ export default async function DashboardPage({
 
           {/* Digital Card Column */}
           <div className="md:col-span-1 h-full">
-            {subscription || isTest ? (
-              <div className="bg-glass-panel border border-glass-stroke p-4 rounded-2xl flex items-center justify-center h-full">
-                <DigitalCard 
-                  memberId={memberId}
-                  fullName={fullName}
-                  age={age}
-                  gender={gender}
-                  joinDate={joinDate}
-                  periodStayMonths={periodStayMonths}
-                />
-              </div>
-            ) : (
-              <div className="bg-glass-panel border border-glass-stroke p-8 rounded-2xl flex flex-col h-full">
-                <h3 className="text-lg font-bold text-white font-sora mb-2">SUBSCRIPTION STATUS</h3>
-                <p className="text-sm text-white/60 mb-6 leading-relaxed flex-1">
-                  Your elite membership requires activation. Proceed to the secure payment portal to unlock full facility access.
-                </p>
-                <Link href="/services" className="w-full py-3 bg-electric-lime text-deep-obsidian font-bold tracking-widest uppercase text-xs rounded hover:bg-white transition-colors shadow-[0_0_15px_rgba(223,255,17,0.2)] text-center mt-auto">
-                  Initialize Payment
-                </Link>
-              </div>
-            )}
+            <IDCardWrapper
+              memberId={memberId}
+              fullName={fullName}
+              age={age}
+              gender={gender}
+              joinDateString={joinDate.toISOString()}
+              periodStayMonths={periodStayMonths}
+              subscriptionActive={!!subscription}
+              isTest={isTest}
+            />
           </div>
         </div>
 
         {/* Action Widgets */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+          <DietProtocol 
+            initialGoal={fitnessGoal}
+            targetCalories={targetCalories}
+          />
+
           <BmiCalculator />
 
-          <div className="bg-deep-obsidian/50 border border-glass-stroke p-8 rounded-2xl flex flex-col h-full">
-            <h3 className="text-lg font-bold text-white font-sora mb-2">TELEGRAM PROTOCOL</h3>
-            <p className="text-sm text-white/60 mb-6 leading-relaxed flex-1">
-              {isTelegramLinked 
-                ? "Your Telegram account is active and linked. You will receive progress reports, workout routines, and fitness metrics directly to your chat."
-                : "Link your Telegram account to receive encrypted workout plans, diet instructions, and direct comms from your trainer."}
-            </p>
+          <GoalTracker 
+            initialGoal={fitnessGoal} 
+            initialWeight={targetWeight} 
+            initialCalories={targetCalories} 
+            initialTimeframe={targetTimeframe}
+            initialGoalsList={goalsList}
+            dailyLogs={dailyLogs}
+          />
+
+          <div className="bg-glass-panel border border-glass-stroke p-8 rounded-2xl relative overflow-hidden group flex flex-col justify-between h-full min-h-[460px]">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-electric-lime/5 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:scale-110 transition-transform duration-500" />
+            <div>
+              <h3 className="text-xl font-bold text-white font-sora mb-6 flex items-center gap-3">
+                <Send className="w-5 h-5 text-electric-lime" />
+                TELEGRAM PROTOCOL
+              </h3>
+              <p className="text-sm text-white/60 mb-6 leading-relaxed">
+                {isTelegramLinked 
+                  ? "Your Telegram account is active and linked. You will receive progress reports, workout routines, and fitness metrics directly to your chat."
+                  : "Link your Telegram account to receive encrypted workout plans, diet instructions, and direct comms from your trainer."}
+              </p>
+            </div>
             {isTelegramLinked ? (
               <div className="w-full py-3 bg-electric-lime/10 border border-electric-lime/30 text-electric-lime font-mono text-center text-xs uppercase tracking-widest rounded-lg mt-auto">
                 Status: Connected
@@ -205,15 +214,6 @@ export default async function DashboardPage({
               </Link>
             )}
           </div>
-
-          <GoalTracker 
-            initialGoal={fitnessGoal} 
-            initialWeight={targetWeight} 
-            initialCalories={targetCalories} 
-            initialTimeframe={targetTimeframe}
-            initialGoalsList={goalsList}
-            dailyLogs={dailyLogs}
-          />
         </div>
 
       </div>
