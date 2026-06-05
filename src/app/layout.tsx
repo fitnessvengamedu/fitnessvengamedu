@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Dumbbell } from "lucide-react";
 import SmoothScroll from "@/components/SmoothScroll";
 import TopNavBar from "@/components/TopNavBar";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const sora = Sora({ 
   subsets: ["latin"],
@@ -58,6 +59,8 @@ export default async function RootLayout({
           <main className="flex-1 pt-20">
             {children}
           </main>
+          
+          <SpeedInsights />
 
           {/* Footer */}
           <footer className="bg-deep-obsidian border-t border-glass-stroke w-full py-12 md:py-16">
