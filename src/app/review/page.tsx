@@ -21,16 +21,16 @@ declare global {
 export default function ReviewPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [rating, setRating] = useState<number>(4.9);
-  const [placeName, setPlaceName] = useState<string>("S. Fitness Gym");
-  const [placeId, setPlaceId] = useState<string>("ChIJHXn5AQkvqjsRGkxQLv3ynEg");
+  const [placeName, setPlaceName] = useState<string>("S FITNESS");
+  const [placeId, setPlaceId] = useState<string>(process.env.NEXT_PUBLIC_GOOGLE_PLACE_ID || "ChIJHXn5AQkvqjsRGkxQLv3ynEg");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let active = true;
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY || "";
     
-    // Graceful fallback to backend API
-    async function fallbackToBackend() {
+    // Fetch backend reviews immediately on mount for 0ms initial perceived latency
+    async function loadBackendReviews() {
       try {
         const res = await fetch("/api/reviews");
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
@@ -39,23 +39,32 @@ export default function ReviewPage() {
           if (data && data.reviews) {
             setReviews(data.reviews);
             setRating(data.rating || 4.9);
-            setPlaceName(data.name || "S. Fitness Gym");
+            setPlaceName(data.name || "S FITNESS");
             setPlaceId(data.placeId || "ChIJHXn5AQkvqjsRGkxQLv3ynEg");
           }
           setLoading(false);
         }
       } catch (err) {
-        console.error("Backend review fetch fallback failed:", err);
+        console.error("Backend review fetch failed:", err);
         if (active) setLoading(false);
       }
     }
 
+    // Load backend data immediately
+    loadBackendReviews();
+
+    // Register auth warning listener
+    const originalAuthFailure = (window as any).gm_authFailure;
+    (window as any).gm_authFailure = () => {
+      console.warn("Google Maps auth failure detected on client side. Using backend reviews.");
+      if (originalAuthFailure) originalAuthFailure();
+    };
+
     if (!apiKey) {
-      fallbackToBackend();
       return;
     }
 
-    // Try loading via Google Maps Places SDK client-side
+    // Try loading via Google Maps Places SDK client-side in the background
     const scriptId = "google-maps-places-script";
     let script = document.getElementById(scriptId) as HTMLScriptElement;
 
@@ -82,19 +91,18 @@ export default function ReviewPage() {
                   profile_photo_url: r.profile_photo_url
                 }));
               
-              setReviews(googleReviews);
-              setRating(place.rating || 4.9);
-              setPlaceName(place.name || "S. Fitness Gym");
-              setLoading(false);
+              if (googleReviews.length > 0) {
+                setReviews(googleReviews);
+              }
+              if (place.rating) setRating(place.rating);
+              if (place.name) setPlaceName(place.name);
             } else {
-              console.warn("Google Places Service failed status:", status);
-              fallbackToBackend();
+              console.warn("Google Places Service returned non-OK status:", status);
             }
           }
         );
       } catch (err) {
         console.error("Google Places Service instantiation error:", err);
-        fallbackToBackend();
       }
     };
 
@@ -116,7 +124,6 @@ export default function ReviewPage() {
 
       const handleScriptError = () => {
         console.warn("Failed to load Google Maps Places script tag");
-        if (active) fallbackToBackend();
       };
 
       script.addEventListener("load", handleScriptLoad);
@@ -126,11 +133,13 @@ export default function ReviewPage() {
         active = false;
         script.removeEventListener("load", handleScriptLoad);
         script.removeEventListener("error", handleScriptError);
+        (window as any).gm_authFailure = originalAuthFailure;
       };
     }
 
     return () => {
       active = false;
+      (window as any).gm_authFailure = originalAuthFailure;
     };
   }, [placeId]);
 

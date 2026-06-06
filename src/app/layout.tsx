@@ -19,40 +19,21 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: `${process.env.NEXT_PUBLIC_APP_NAME || "Fitness Gym"} | Engineered for Performance`,
+  title: `${process.env.NEXT_PUBLIC_APP_NAME || "S FITNESS"} | Engineered for Performance`,
   description: "Experience a new dimension of human performance. We merge elite kinetic coaching with biometric data streams.",
 };
 
-import { createClient, createAdminClient } from '@/utils/supabase/server';
-
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  let userWithRole = null;
-  if (user) {
-    const adminSupabase = await createAdminClient();
-    const { data: profile } = await adminSupabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
-    userWithRole = {
-      ...user,
-      role: profile?.role || 'member'
-    };
-  }
-
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body className={`${sora.variable} ${jetbrainsMono.variable} font-sans min-h-screen flex flex-col bg-deep-obsidian text-foreground antialiased`} suppressHydrationWarning>
         <SmoothScroll>
           {/* TopNavBar */}
-          <TopNavBar appName={process.env.NEXT_PUBLIC_APP_NAME || "Fitness Gym"} user={userWithRole} />
+          <TopNavBar appName={process.env.NEXT_PUBLIC_APP_NAME || "S FITNESS"} />
 
           {/* Main Content */}
           <main className="flex-1 pt-20">
@@ -66,7 +47,7 @@ export default async function RootLayout({
               {/* Brand & Address */}
               <div className="flex flex-col items-start gap-4 flex-1">
                 <div className="text-3xl font-bold tracking-tighter text-white font-sora">
-                  <span className="text-electric-lime uppercase animate-brand-pulse inline-block">{process.env.NEXT_PUBLIC_APP_NAME || "Fitness Gym"}</span>
+                  <span className="text-electric-lime uppercase animate-brand-pulse inline-block">{process.env.NEXT_PUBLIC_APP_NAME || "S FITNESS"}</span>
                 </div>
                 <div className="text-white/60 font-mono text-xs leading-relaxed max-w-sm text-left">
                   <p className="mb-2 font-bold text-white/80">COMMAND CENTER</p>
@@ -113,7 +94,7 @@ export default async function RootLayout({
 
             <div className="w-full max-w-7xl mx-auto px-4 md:px-12 mt-12 pt-8 border-t border-glass-stroke">
               <p className="text-white/30 text-center font-mono text-[10px] uppercase tracking-widest">
-                © {new Date().getFullYear()} {process.env.NEXT_PUBLIC_APP_NAME || "Fitness Gym"}. ENGINEERED FOR PERFORMANCE.
+                © {new Date().getFullYear()} {process.env.NEXT_PUBLIC_APP_NAME || "S FITNESS"}. ENGINEERED FOR PERFORMANCE.
               </p>
             </div>
           </footer>

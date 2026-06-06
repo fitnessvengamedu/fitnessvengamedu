@@ -20,6 +20,7 @@ export default function GalleryPage() {
   const [isSyncing, setIsSyncing] = useState(false);
   const [activeMedia, setActiveMedia] = useState<GalleryItem | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
 
   const fetchGallery = async (showSyncSpinner = false) => {
     if (showSyncSpinner) setIsSyncing(true);
@@ -219,7 +220,10 @@ export default function GalleryPage() {
                           alt={item.event_name} 
                           referrerPolicy="no-referrer"
                           loading="lazy"
-                          className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-700 z-0" 
+                          onLoad={() => setLoadedImages(prev => ({ ...prev, [item.id]: true }))}
+                          className={`absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-all duration-700 z-0 ${
+                            loadedImages[item.id] ? 'opacity-40' : 'opacity-0'
+                          }`} 
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-deep-obsidian via-deep-obsidian/40 to-transparent z-10" />
                       </>
@@ -230,7 +234,10 @@ export default function GalleryPage() {
                           src={optimizedThumbnail} 
                           alt="Video thumbnail" 
                           loading="lazy"
-                          className="absolute inset-0 w-full h-full object-cover opacity-25 group-hover:scale-105 transition-transform duration-700 z-0" 
+                          onLoad={() => setLoadedImages(prev => ({ ...prev, [item.id]: true }))}
+                          className={`absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-all duration-700 z-0 ${
+                            loadedImages[item.id] ? 'opacity-25' : 'opacity-0'
+                          }`} 
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-deep-obsidian via-deep-obsidian/40 to-transparent z-10" />
                         <div className="absolute inset-0 flex items-center justify-center z-20 group-hover:scale-110 transition-transform duration-300">
@@ -290,7 +297,7 @@ export default function GalleryPage() {
           >
             {activeMedia.file_type === 'image' ? (
               <img 
-                src={`${activeMedia.file_url}=w1200`} 
+                src={`${activeMedia.file_url}=w1000`} 
                 alt={activeMedia.event_name} 
                 referrerPolicy="no-referrer"
                 className="w-full max-h-[70vh] object-contain mx-auto"

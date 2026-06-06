@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { google } from 'googleapis';
 import { Readable } from 'stream';
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
+import { revalidatePath } from 'next/cache';
 
 // Create a service role admin client for database insertions
 const supabaseAdmin = createSupabaseClient(
@@ -118,6 +119,15 @@ export async function POST(req: Request) {
         console.error('[Upload] Exception saving to database:', err);
         dbError = err.message;
       }
+    }
+
+    // Purge cached gallery page and gallery API responses so users see the new media immediately
+    try {
+      revalidatePath('/gallery');
+      revalidatePath('/api/gallery');
+      console.log('[Upload] Successfully triggered on-demand cache revalidation for gallery routes');
+    } catch (revalErr: any) {
+      console.warn('[Upload] Failed to revalidate gallery paths:', revalErr.message);
     }
 
     return NextResponse.json({

@@ -1,33 +1,27 @@
 # Current State & Progress Report
 
 ## Current Implementation Plan
-*The implementation plan is fully executed and verified.*
+Reorganize and unify the dashboard telemetry & protocol widgets (Diet & Macro Protocol, BMI Telemetry, Goal Protocol, Telegram Protocol) into a consistent grid series with matching glassmorphic dimensions, typography, glow animations, and hover transitions.
 
 ## Tasks
 **Completed Tasks:**
-- Read and extract requirements from `FitnessGym_Website_Plan_1.docx`
-- Migrate Telegram Bots to Python:
-  - Implement Member Bot (`user_bot.py`)
-  - Implement Trainer Bot (`trainer_bot.py`)
-  - Install dependencies (`pyTelegramBotAPI`, `supabase`, `python-dotenv`)
-  - Verify Python bot long-polling stability and environment loading
-  - Clean up legacy JS bot scripts (`user_bot.js`, `trainer_bot.js`)
-- Google Reviews Integration:
-  - Implement API endpoint `/api/reviews/route.ts`
-  - Implement server-side rating >= 3 stars filtering rule
-  - Design and build premium glassmorphic Reviews Widget on Homepage
-  - Verify layout and mobile-first responsiveness
-- Subscription & Payment Automation:
-  - Modify Razorpay webhook to record `current_period_start` (Paid Date) and `current_period_end` (Repay Due Date) in `subscriptions` table
-  - Add 7-day pre-due-date automated Telegram notifications to members and trainers/owners in `src/app/api/telegram/cron/route.ts`
-  - Implement and execute test verification suite in `scripts/test-payment-reminder.js`
-- Enhancing Admin Gym Dashboard & Gallery Events:
-  - Retrieve and pass user roles from server layout to front-end header
-  - Render secure "Admin Panel" menu option for administrators on both mobile/desktop layout
-  - Build new Admin Command Center `/admin` displaying active member registry, subscriptions, contact info, and upcoming renewal date alert indicators
-  - Implement robust event-based upload pipeline at `/api/admin/upload` supporting `event_name` values and prefix naming on Google Drive
-  - Build dynamic, event-filtered gallery view page at `/gallery` supporting live synchronization, video players, and direct Google Drive file listing fallback
-  - Verify full project compilation and execution (`npm run build` completed successfully)
+- Add `Plus` button next to pencil icon in Goal Tracker header.
+- Optimize gallery rendering performance using Edge Cache Control and smooth image transitions.
+- Split Telegram Protocol and add a new Diet & Macro Protocol dashboard component.
+- Add gender selector, WHO segmented bar graph, and gender-specific body insights to BMI Telemetry card.
+- Standardize layout sizes, min-heights, hover glows, and typography across all 4 dashboard widgets.
+- Re-order the dashboard cards to sequence as: Diet & Macro, BMI, Goal, and Telegram.
+- Deploy the updated dashboard layout changes to the live production server (Vercel).
+- Verify the layout and reviews page on the production domain.
+- Propose layout Options (1: 4-column row, 2: vertical stack) for dashboard widgets.
+- Implement chosen layout and build/deploy to production Vercel.
+- Verify production display on custom domain.
+- Create IDCardWrapper component with toggles for Subscription and ID Card.
+- Integrate IDCardWrapper into the main dashboard page.
+- Create a standalone /dashboard/card page with 3D flip card, barcode, and print/download utilities.
+- Build, test, and deploy to Vercel production.
+- Improve dashboard layout spacing by expanding container max-width to 7xl, switching widgets grid to 2-column, and resolving text messy overlap issues.
+
 
 **Pending Tasks:**
 - None

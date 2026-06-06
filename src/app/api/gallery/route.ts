@@ -2,7 +2,7 @@ import { NextResponse, NextRequest } from 'next/server';
 import { google } from 'googleapis';
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 
-export const revalidate = 0; // Ensure fresh data on each call
+export const revalidate = 300; // Cache for 5 minutes (300 seconds)
 
 const supabaseAdmin = createSupabaseClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -24,10 +24,17 @@ export async function GET(request: NextRequest) {
 
         if (!dbError && dbItems && dbItems.length > 0) {
           console.log(`[Gallery API] Successfully loaded ${dbItems.length} items from Supabase.`);
-          return NextResponse.json({
-            source: 'database',
-            items: dbItems
-          });
+          return NextResponse.json(
+            {
+              source: 'database',
+              items: dbItems
+            },
+            {
+              headers: {
+                'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=59'
+              }
+            }
+          );
         }
         
         if (dbError) {
@@ -190,10 +197,19 @@ export async function GET(request: NextRequest) {
           .order('created_at', { ascending: false });
 
         if (!dbError && dbItems && dbItems.length > 0) {
-          return NextResponse.json({
-            source: 'database-synced',
-            items: dbItems
-          });
+          return NextResponse.json(
+            {
+              source: 'database-synced',
+              items: dbItems
+            },
+            {
+              headers: {
+                'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
+              }
+            }
+          );
         }
       } catch (fetchDbError: any) {
         console.error('[Gallery API] Failed to re-fetch database after sync:', fetchDbError.message);
@@ -202,10 +218,17 @@ export async function GET(request: NextRequest) {
 
     // Fallback: Return Google Drive items directly if database is empty or queries failed
     driveItems.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-    return NextResponse.json({
-      source: 'google-drive-fallback',
-      items: driveItems
-    });
+    return NextResponse.json(
+      {
+        source: 'google-drive-fallback',
+        items: driveItems
+      },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=59'
+        }
+      }
+    );
 
   } catch (error: any) {
     console.error('[Gallery API] Fatal error listing gallery items:', error);
