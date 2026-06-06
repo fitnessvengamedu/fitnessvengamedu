@@ -1,12 +1,62 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-export default function TopNavBar({ appName, user }: { appName: string, user?: any }) {
+export default function TopNavBar({ appName, user: initialUser }: { appName: string, user?: any }) {
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
+  const [user, setUser] = useState<any>(initialUser || null)
+
+  useEffect(() => {
+    if (initialUser) {
+      setUser(initialUser)
+      try {
+        localStorage.setItem('s_fitness_user_session', JSON.stringify(initialUser))
+      } catch (e) {}
+      return
+    }
+
+    // Try reading cache on mount for instant visual response
+    try {
+      const cached = localStorage.getItem('s_fitness_user_session')
+      if (cached) {
+        setUser(JSON.parse(cached))
+      }
+    } catch (e) {}
+
+    // Verify session client-side dynamically
+    async function getSession() {
+      try {
+        const { createClient } = await import('@/utils/supabase/client')
+        const supabase = createClient()
+        const { data: { user: authUser } } = await supabase.auth.getUser()
+        
+        if (authUser) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', authUser.id)
+            .single()
+            
+          const updatedUser = {
+            ...authUser,
+            role: profile?.role || 'member'
+          }
+          setUser(updatedUser)
+          localStorage.setItem('s_fitness_user_session', JSON.stringify(updatedUser))
+        } else {
+          setUser(null)
+          localStorage.removeItem('s_fitness_user_session')
+        }
+      } catch (err) {
+        console.error('Error verifying user session:', err)
+      }
+    }
+
+    getSession()
+  }, [initialUser])
 
   const navLinks = [
     { name: 'Training', href: '/' },

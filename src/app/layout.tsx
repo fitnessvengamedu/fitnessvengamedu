@@ -23,36 +23,17 @@ export const metadata: Metadata = {
   description: "Experience a new dimension of human performance. We merge elite kinetic coaching with biometric data streams.",
 };
 
-import { createClient, createAdminClient } from '@/utils/supabase/server';
-
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  let userWithRole = null;
-  if (user) {
-    const adminSupabase = await createAdminClient();
-    const { data: profile } = await adminSupabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
-    userWithRole = {
-      ...user,
-      role: profile?.role || 'member'
-    };
-  }
-
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body className={`${sora.variable} ${jetbrainsMono.variable} font-sans min-h-screen flex flex-col bg-deep-obsidian text-foreground antialiased`} suppressHydrationWarning>
         <SmoothScroll>
           {/* TopNavBar */}
-          <TopNavBar appName={process.env.NEXT_PUBLIC_APP_NAME || "S FITNESS"} user={userWithRole} />
+          <TopNavBar appName={process.env.NEXT_PUBLIC_APP_NAME || "S FITNESS"} />
 
           {/* Main Content */}
           <main className="flex-1 pt-20">
