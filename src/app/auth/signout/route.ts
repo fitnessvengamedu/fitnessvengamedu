@@ -17,5 +17,5 @@ export async function POST(request: Request) {
   revalidatePath('/', 'layout')
   
   const url = new URL('/signin', request.url)
-  return NextResponse.redirect(url)
+  return NextResponse.redirect(url, { status: 303 })
 }
