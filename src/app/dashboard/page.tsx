@@ -101,8 +101,8 @@ export default async function DashboardPage({
           </div>
           
           <form action="/auth/signout" method="post">
-            <button className="px-6 py-3 border border-apex-crimson/50 text-apex-crimson hover:bg-apex-crimson/10 transition-colors font-mono uppercase tracking-widest text-xs rounded-lg">
-              Terminate Session
+            <button className="px-6 py-3 border border-apex-crimson/50 text-apex-crimson hover:bg-apex-crimson/10 transition-colors font-mono uppercase tracking-widest text-xs rounded-lg cursor-pointer">
+              Sign Out
             </button>
           </form>
         </div>
