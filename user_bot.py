@@ -127,7 +127,7 @@ def handle_message(message):
         try:
             # Query all users from auth admin and find matching email
             users_response = supabase_admin.auth.admin.list_users()
-            users = users_response.users
+            users = users_response if isinstance(users_response, list) else (getattr(users_response, 'users', None) or [])
 
             if not users:
                 bot.send_message(chat_id, "❌ Error accessing accounts. Please try again later.")

@@ -230,14 +230,22 @@ WITH CHECK (
 
   return (
     <div className="container mx-auto px-4 py-16 md:py-24 bg-deep-obsidian">
-      {/* Title */}
-      <div className="text-center mb-12 max-w-2xl mx-auto">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tighter font-sora text-white leading-tight mb-4">
-          ADMIN <span className="text-electric-lime text-glow">COMMAND CENTER</span>
-        </h1>
-        <p className="text-white/60 text-sm font-mono uppercase tracking-widest">
-          Secure Biometric & Stream Operations Console
-        </p>
+      {/* Header section */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-glass-stroke pb-6 mb-12">
+        <div>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tighter font-sora text-white leading-tight mb-2">
+            ADMIN <span className="text-electric-lime text-glow">COMMAND CENTER</span>
+          </h1>
+          <p className="text-white/60 text-sm font-mono uppercase tracking-widest">
+            Secure Biometric & Stream Operations Console
+          </p>
+        </div>
+        
+        <form action="/auth/signout" method="post">
+          <button type="submit" className="px-6 py-3 border border-apex-crimson/50 text-apex-crimson hover:bg-apex-crimson/10 transition-colors font-mono uppercase tracking-widest text-xs rounded-lg cursor-pointer">
+            Sign Out
+          </button>
+        </form>
       </div>
 
       {/* Overview Stat Cards */}
